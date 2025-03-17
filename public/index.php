@@ -1,2 +1,5 @@
-Qassim is the leader tra 😇
-+ there is boostrap + css file cuz i dont know whhich one we will use 
+<?php require('../views/template/header.phtml'); ?>
+<?php
+include __DIR__ . '/../views/home.phtml';
+?>
+<?php require('../views/template/footer.phtml'); ?>

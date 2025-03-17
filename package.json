@@ -1,0 +1,24 @@
+{
+  "name": "borrowmycharger",
+  "version": "1.0.0",
+  "description": "Qassim is the leader tra 😇",
+  "main": "index.js",
+  "dependencies": {
+    "bootstrap": "^5.3.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Qassimv/BorrowMyCharger.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Qassimv/BorrowMyCharger/issues"
+  },
+  "homepage": "https://github.com/Qassimv/BorrowMyCharger#readme"
+}
