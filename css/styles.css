@@ -13,7 +13,7 @@ button:active {
 }
 
 .custom-btn {
-  background-color: #6c5ce7;
+  background-color: #a31a5a;
   border: none;
   padding: 14px 15px;
   cursor: pointer;
@@ -25,7 +25,7 @@ button:active {
 }
 
 .custom-btn:hover {
-  background-color: #2a3565;
+  background-color: #7b1444;
 }
 
 .cancel-btn {
