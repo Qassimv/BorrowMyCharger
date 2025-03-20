@@ -1,11 +1,25 @@
 <div class="container-fluid py-5 custom-bg">
     <div class="row justify-content-center">
         <div class="col-12 col-lg-10">
-
+        <div class="col-12">
+                <h2 class="fw-bold text-white mb-4">Admin</h2>
+            </div>
             <div class="card bg-dark text-white shadow mb-4">
                 <div class="card-body p-4">
-                    <h3 class="h5 mb-3">My Charging Point</h3>
+                    <h3 class="h5 mb-3">All Charging Points</h3>
                     <div id="chargingPointContainer">
+                        <div class="card bg-secondary text-white mb-3">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="mb-1"><strong>Location:</strong> Manama</p>
+                                    <p class="mb-1"><strong>Price:</strong> 20BD</p>
+                                    <p class="mb-1"><strong>Availability:</strong> Available</p>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-light fw-bold">View</button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card bg-secondary text-white mb-3">
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div>
@@ -22,33 +36,66 @@
                     <button class="btn custom-btn btn-lg" data-bs-toggle="modal" data-bs-target="#addChargingPointModal">Add Charging Point</button>
                 </div>
             </div>
-
             <div class="card bg-dark text-white shadow mb-4">
+    <div class="card-body p-4">
+        <h3 class="h5 mb-3">User Accounts</h3>
+        <div id="userAccountsContainer">
+            <div class="card bg-secondary text-white mb-3">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-1"><strong>User ID:</strong> #101</p>
+                        <p class="mb-1"><strong>Name:</strong> John Doe</p>
+                        <p class="mb-1"><strong>Email:</strong> john.doe@example.com</p>
+                        <p class="mb-1"><strong>Status:</strong> Active</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-light fw-bold">View</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card bg-secondary text-white mb-3">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-1"><strong>User ID:</strong> #102</p>
+                        <p class="mb-1"><strong>Name:</strong> Jane Smith</p>
+                        <p class="mb-1"><strong>Email:</strong> jane.smith@example.com</p>
+                        <p class="mb-1"><strong>Status:</strong> Active</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-light fw-bold">View</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card bg-secondary text-white mb-3">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-1"><strong>User ID:</strong> #103</p>
+                        <p class="mb-1"><strong>Name:</strong> Michael Johnson</p>
+                        <p class="mb-1"><strong>Email:</strong> michael.johnson@example.com</p>
+                        <p class="mb-1"><strong>Status:</strong> Pending</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-light fw-bold">View</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Generate SQL Queries Card -->
+<div class="card bg-dark text-white shadow mb-4">
                 <div class="card-body p-4">
-                    <h3 class="h5 mb-3">All Booking Requests</h3>
-                    <div id="chargingPointRequestsContainer">
-                        <div class="card bg-secondary text-white mb-3">
-                            <div class="card-body d-flex justify-content-between align-items-center">
-                                <div>
-                                    <p class="mb-1"><strong>Request ID:</strong> #123</p>
-                                    <p class="mb-1"><strong>Request Duration:</strong> 12.3.2025 - 13.3.2025</p>
-                                </div>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-light fw-bold">View</button>
-                                </div>
-                            </div>
+                    <h3 class="h5 mb-3">Generate System Reports</h3>
+                    <p class="mb-3">Use the text area below to enter SQL queries for generating system reports:</p>
+                    <form id="queryForm">
+                        <div class="mb-3">
+                            <label for="sqlQuery" class="form-label">Enter SQL Query</label>
+                            <textarea class="form-control bg-secondary text-white" id="sqlQuery" rows="4" placeholder="SELECT * FROM charging_points;"></textarea>
                         </div>
-                        <div class="card bg-secondary text-white mb-3">
-                            <div class="card-body d-flex justify-content-between align-items-center">
-                                <div>
-                                    <p class="mb-1"><strong>Request ID:</strong> #123</p>
-                                    <p class="mb-1"><strong>Request Duration:</strong> 12.3.2025 - 13.3.2025</p>
-                                </div>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-light fw-bold">View</button>
-                                </div>
-                            </div>
-                        </div>
+                        <button type="submit" class="btn custom-btn">Run Query</button>
+                    </form>
+                    <div class="mt-3" id="queryResultContainer">
                     </div>
                 </div>
             </div>
@@ -56,6 +103,7 @@
         </div>
     </div>
 </div>
+
 
 <div class="modal fade" id="addChargingPointModal" tabindex="-1" aria-labelledby="addChargingPointModalLabel" aria-hidden="true">
     <div class="modal-dialog">
