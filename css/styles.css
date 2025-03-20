@@ -120,3 +120,8 @@ main {
   width: 100%;
   flex-grow: 1;
 }
+
+#searchChargingPoints::placeholder {
+  color: #adb5bd; 
+  opacity: 1; 
+}
