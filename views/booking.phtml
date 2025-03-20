@@ -1,0 +1,52 @@
+<div class="container-fluid py-5 custom-bg">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="row mb-5">
+                <div class="col-12">
+                    <h1 class="fw-bold text-white display-5">Book Your Charging Point</h1>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-6 mb-4">
+                    <div class="card bg-dark text-white">
+                        <div class="card-img-top bg-image" style="background-image: url('../images/DC Fast Charger.jpg'); 
+                        background-size: cover; background-position: center; 
+                        aspect-ratio: 16/9;">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">DC Fast Charger - Location A</h5>
+                            <p class="card-text text-secondary">Price: $0.30 per kWh</p>
+                            <p class="card-text text-secondary">Availability: 24/7</p>
+                            <p class="card-text text-secondary">Power Output: 50 kW</p>
+                            <p class="card-text text-secondary">Connector Type: CCS</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 mb-4">
+                    <div class="card bg-dark text-white">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Booking Details</h5>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="startDate" class="form-label">Start Date</label>
+                                    <input type="datetime-local" class="form-control" id="startDate" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="endDate" class="form-label">End Date</label>
+                                    <input type="datetime-local" class="form-control" id="endDate" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="totalCost" class="form-label">Estimated Total Cost</label>
+                                    <input type="text" class="form-control" id="totalCost" value="$0.00" readonly>
+                                </div>
+                                <button type="submit" class="btn custom-btn w-100 fw-bold">Book and Pay Now</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
