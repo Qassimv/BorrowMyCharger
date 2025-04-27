@@ -1,44 +1,62 @@
+
 <?php
+
 class Database
 {
-    private $LOCAL_DB = 0;
-    protected $dbc = NULL;
+    /**
+     * @var Database
+     */
+    protected static $_dbInstance = null;
 
-    public function getConnection()
+    /**
+     * @var PDO
+     */
+    protected $_dbHandle;
+
+    /**
+     * @return Database
+     */
+    public static function getInstance()
     {
-        if ($this->dbc === NULL) {
-            try {
-                if (!$this->LOCAL_DB) {
-                    $host = 'localhost';
-                    $dbname = 'db202202979';
-                    $username = 'u202202979';
-                    $password = 'u202202979';
-                } else {
-                    $host = 'localhost';
-                    $dbname = 'dbStudentID';
-                    $username = 'uStudentID';
-                    $password = 'uStudentID';
-                }
+        $username = 'u202202979';
+        $password = 'u202202979';
+        $host = '20.126.5.244';
+        $dbName = 'db202202979';
 
-                $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
-                $options = [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false,
-                ];
-
-                $this->dbc = new PDO($dsn, $username, $password, $options);
-            } catch (PDOException $e) {
-                die("Connection failed: " . $e->getMessage());
-            }
+        if (self::$_dbInstance === null) { //checks if the PDO exists
+            // creates new instance if not, sending in connection info
+            self::$_dbInstance = new self($username, $password, $host, $dbName);
         }
 
-        return $this->dbc;
+        return self::$_dbInstance;
     }
 
-    public function closeDB()
+    /**
+     * @param $username
+     * @param $password
+     * @param $host
+     * @param $database
+     */
+    private function __construct($username, $password, $host, $database)
     {
-        $this->dbc = NULL; // PDO closes connection when set to NULL
+        try {
+            $this->_dbHandle = new PDO("mysql:host=$host;dbname=$database", $username, $password);
+            $this->_dbHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            throw new Exception("Database connection failed: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * @return PDO
+     */
+    public function getdbConnection()
+    {
+        return $this->_dbHandle; // returns the PDO handle to be used  elsewhere
+    }
+
+    public function __destruct()
+    {
+        $this->_dbHandle = null; // destroys the PDO handle when no longer needed  longer needed
     }
 }
-?>
