@@ -7,12 +7,18 @@
                     <h1 class="fw-bold text-white display-5">Book Your Charging Point</h1>
                 </div>
             </div>
-
+            
+            <?php if (!empty($view->message)): ?>
+            <div class="alert <?php echo strpos($view->message, 'successful') !== false ? 'alert-success' : 'alert-danger'; ?> mb-4">
+                <?php echo $view->message; ?>
+            </div>
+            <?php endif; ?>
+            
             <div class="row">
                 <div class="col-12 col-md-6 mb-4">
                     <div class="card bg-dark text-white">
-                        <div class="card-img-top bg-image" style="background-image: url('images/DC Fast Charger.jpg'); 
-                        background-size: cover; background-position: center; 
+                        <div class="card-img-top bg-image" style="background-image: url('images/DC Fast Charger.jpg');
+                        background-size: cover; background-position: center;
                         aspect-ratio: 16/9;">
                         </div>
                         <div class="card-body">
@@ -24,25 +30,26 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-12 col-md-6 mb-4">
                     <div class="card bg-dark text-white">
                         <div class="card-body">
                             <h5 class="card-title mb-4">Booking Details</h5>
-                            <form>
+                            <form method="POST" action="booking.php">
+                                <input type="hidden" name="charge_point_id" value="1">
+                                
                                 <div class="mb-3">
                                     <label for="startDate" class="form-label">Start Date</label>
-                                    <input type="datetime-local" class="form-control" id="startDate" required>
+                                    <input type="date" class="form-control" id="startDate" name="start_datetime" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="endDate" class="form-label">End Date</label>
-                                    <input type="datetime-local" class="form-control" id="endDate" required>
+                                    <input type="date" class="form-control" id="endDate" name="end_datetime" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="totalCost" class="form-label">Estimated Total Cost</label>
-                                    <input type="text" class="form-control" id="totalCost" value="$0.00" readonly>
+                                    <input type="text" class="form-control" id="totalCost" name="cost" value="$0.00" readonly>
                                 </div>
-                                <button type="submit" class="btn custom-btn w-100 fw-bold" onclick="window.location.href='payment.php'">Book and Pay Now</button>
+                                <button type="submit" name="submit_booking" class="btn custom-btn w-100 fw-bold">Book and Pay Now</button>
                             </form>
                         </div>
                     </div>
@@ -51,4 +58,6 @@
         </div>
     </div>
 </div>
+
+<?php if (isset($view->script)) echo $view->script; ?>
 <?php require('template/footer.phtml') ?>
