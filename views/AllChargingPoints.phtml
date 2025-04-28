@@ -31,7 +31,9 @@
                                 <p class="card-text text-secondary">Price: $0.30 per kWh</p>
                                 <p class="card-text text-secondary">Availability: 24/7</p>
                             </div>
-                            <button class="btn custom-btn mt-4 w-100 fw-bold">Book Now</button>
+                            <?php if ($_SESSION['role'] === 'user'): ?>
+                                <button class="btn custom-btn mt-4 w-100 fw-bold">Book Now</button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -48,7 +50,9 @@
                                 <p class="card-text text-secondary">Price: $0.35 per kWh</p>
                                 <p class="card-text text-secondary">Availability: 8 AM - 10 PM</p>
                             </div>
-                            <button class="btn custom-btn mt-4 w-100 fw-bold">Book Now</button>
+                            <?php if ($_SESSION['role'] === 'user'): ?>
+                                <button class="btn custom-btn mt-4 w-100 fw-bold">Book Now</button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -65,7 +69,9 @@
                                 <p class="card-text text-secondary">Price: $0.20 per kWh</p>
                                 <p class="card-text text-secondary">Availability: 24/7</p>
                             </div>
-                            <button class="btn custom-btn mt-4 w-100 fw-bold">Book Now</button>
+                            <?php if ($_SESSION['role'] === 'user'): ?>
+                                <button class="btn custom-btn mt-4 w-100 fw-bold">Book Now</button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -82,7 +88,9 @@
                                 <p class="card-text text-secondary">Price: $0.25 per kWh</p>
                                 <p class="card-text text-secondary">Availability: 6 PM - 8 AM</p>
                             </div>
-                            <button class="btn custom-btn mt-4 w-100 fw-bold">Book Now</button>
+                            <?php if ($_SESSION['role'] === 'user'): ?>
+                                <button class="btn custom-btn mt-4 w-100 fw-bold">Book Now</button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -99,7 +107,9 @@
                                 <p class="card-text text-secondary">Price: $0.40 per kWh</p>
                                 <p class="card-text text-secondary">Availability: 24/7</p>
                             </div>
-                            <button class="btn custom-btn mt-4 w-100 fw-bold">Book Now</button>
+                            <?php if ($_SESSION['role'] === 'user'): ?>
+                                <button class="btn custom-btn mt-4 w-100 fw-bold">Book Now</button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -116,7 +126,9 @@
                                 <p class="card-text text-secondary">Price: $0.45 per kWh</p>
                                 <p class="card-text text-secondary">Availability: 7 AM - 11 PM</p>
                             </div>
-                            <button class="btn custom-btn mt-4 w-100 fw-bold">Book Now</button>
+                            <?php if ($_SESSION['role'] === 'user'): ?>
+                                <button class="btn custom-btn mt-4 w-100 fw-bold">Book Now</button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
