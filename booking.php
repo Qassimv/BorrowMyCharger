@@ -9,31 +9,31 @@ $view->message = '';
 try {
     $db = Database::getInstance();
     $dbConnection = $db->getdbConnection();
-    
+
     $chargePointId = 1; // hardcoded for now
     $stmt = $dbConnection->prepare("SELECT price_per_kwh FROM charge_points_pr WHERE charge_point_id = :id");
     $stmt->bindParam(':id', $chargePointId, PDO::PARAM_INT);
     $stmt->execute();
     $chargePoint = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if ($chargePoint) {
         $view->pricePerKwh = (float)$chargePoint['price_per_kwh'];
     } else {
         $view->pricePerKwh = 0.30; // Default if not set in db
     }
-    
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
         $chargePointId = filter_input(INPUT_POST, 'charge_point_id', FILTER_VALIDATE_INT);
         $startDatetime = filter_input(INPUT_POST, 'start_datetime');
         $endDatetime = filter_input(INPUT_POST, 'end_datetime');
-        
+
         $startDatetime = $startDatetime . ' 00:00:00';
         $endDatetime = $endDatetime . ' 23:59:59';
-        
+
         $startDateTime = new DateTime($startDatetime);
         $endDateTime = new DateTime($endDatetime);
         $now = new DateTime();
-        
+
         if ($startDateTime < $now) {
             $view->message = 'Start time cannot be in the past.';
         } elseif ($endDateTime <= $startDateTime) {
@@ -45,22 +45,11 @@ try {
                     $chargePointId,
                     $startDatetime,
                     $endDatetime,
-                    $view->pricePerKwh 
+                    $view->pricePerKwh
                 );
-                
+
                 if ($result) {
-                    $start = new DateTime($startDatetime);
-                    $end = new DateTime($endDatetime);
-                    $hours = ($end->getTimestamp() - $start->getTimestamp()) / 3600;
-                    $AVG_KWH_PER_HOUR = 10;
-                    $estimatedKwh = $hours * $AVG_KWH_PER_HOUR;
-                    $cost = $estimatedKwh * $view->pricePerKwh;
-                
-                    $costParam = urlencode(number_format($cost, 2, '.', ''));
-                
-                    $view->message = 'Booking successful! Redirecting to payment...';
-                    header("refresh:2;url=payment.php?amount=$costParam");
-                    exit;
+                    $view->message = 'Request sent, waiting for approval.';
                 } else {
                     $view->message = 'Booking failed. Please check server logs.';
                 }
@@ -69,7 +58,7 @@ try {
             }
         }
     }
-    
+
     $view->script = '
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -104,9 +93,7 @@ document.addEventListener("DOMContentLoaded", function() {
 ';
 
     require_once(__DIR__ . '/views/booking.phtml');
-
 } catch (Exception $e) {
     error_log("Booking Page Error: " . $e->getMessage());
     echo "Error loading booking page: " . $e->getMessage();
 }
-?>

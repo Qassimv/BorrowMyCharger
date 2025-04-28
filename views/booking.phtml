@@ -10,10 +10,11 @@
             </div>
 
             <?php if (!empty($view->message)): ?>
-                <div class="alert <?php echo strpos($view->message, 'successful') !== false ? 'alert-success' : 'alert-danger'; ?> mb-4">
+                <div class="alert <?php echo (strpos($view->message, 'successful') !== false || strpos($view->message, 'Request sent') !== false) ? 'alert-success' : 'alert-danger'; ?> mb-4">
                     <?php echo $view->message; ?>
                 </div>
             <?php endif; ?>
+
 
             <div class="row">
                 <div class="col-12 col-md-6 mb-4">
@@ -52,7 +53,7 @@
                                     <label for="totalCost" class="form-label">Estimated Total Cost</label>
                                     <input type="text" class="form-control" id="totalCost" name="cost" value="$0.00" readonly>
                                 </div>
-                                <button type="submit" name="submit_booking" class="btn custom-btn w-100 fw-bold">Book and Pay Now</button>
+                                <button type="submit" name="submit_booking" class="btn custom-btn w-100 fw-bold">Book Now</button>
                             </form>
                         </div>
                     </div>
