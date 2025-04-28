@@ -49,8 +49,17 @@ try {
                 );
                 
                 if ($result) {
+                    $start = new DateTime($startDatetime);
+                    $end = new DateTime($endDatetime);
+                    $hours = ($end->getTimestamp() - $start->getTimestamp()) / 3600;
+                    $AVG_KWH_PER_HOUR = 10;
+                    $estimatedKwh = $hours * $AVG_KWH_PER_HOUR;
+                    $cost = $estimatedKwh * $view->pricePerKwh;
+                
+                    $costParam = urlencode(number_format($cost, 2, '.', ''));
+                
                     $view->message = 'Booking successful! Redirecting to payment...';
-                    header('refresh:2;url=payment.php');
+                    header("refresh:2;url=payment.php?amount=$costParam");
                     exit;
                 } else {
                     $view->message = 'Booking failed. Please check server logs.';
