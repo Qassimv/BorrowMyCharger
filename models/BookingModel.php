@@ -16,6 +16,14 @@ class BookingModel
     public function createBooking($chargePointId, $startDatetime, $endDatetime, $pricePerKwh)
     {
         try {
+            session_start(); 
+
+            if (!isset($_SESSION['user_id'])) {
+                throw new Exception("User not logged in.");
+            }
+
+            $userId = $_SESSION['user_id'];
+
             $conn = $this->db->getdbConnection();
             if (!$conn) {
                 throw new Exception("Database connection failed.");
@@ -32,8 +40,6 @@ class BookingModel
             $AVG_KWH_PER_HOUR = 10; // Fixed usage
             $estimatedKwh = $hours * $AVG_KWH_PER_HOUR;
             $cost = $estimatedKwh * $pricePerKwh;
-
-            $userId = 1; // Hardcoded for now
 
             $stmt = $conn->prepare("
                 INSERT INTO bookings_pr (charge_point_id, user_id, start_datetime, end_datetime, cost, status)

@@ -1,4 +1,6 @@
 <?php
+session_start(); 
+
 require_once('models/BookingModel.php');
 require_once('models/Database.php');
 
@@ -97,3 +99,4 @@ document.addEventListener("DOMContentLoaded", function() {
     error_log("Booking Page Error: " . $e->getMessage());
     echo "Error loading booking page: " . $e->getMessage();
 }
+?>
