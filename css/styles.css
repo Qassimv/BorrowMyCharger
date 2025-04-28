@@ -125,3 +125,8 @@ main {
   color: #adb5bd; 
   opacity: 1; 
 }
+
+.bg-dark::placeholder {
+  color:  #adb5bd; 
+  opacity: 1;
+}
