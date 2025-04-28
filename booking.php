@@ -9,9 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
     $chargePointId = filter_input(INPUT_POST, 'charge_point_id', FILTER_VALIDATE_INT);
     $startDatetime = filter_input(INPUT_POST, 'start_datetime');
     $endDatetime = filter_input(INPUT_POST, 'end_datetime');
-    $cost = filter_input(INPUT_POST, 'cost');
+    // $cost = filter_input(INPUT_POST, 'cost');
     
-    $cost = floatval(str_replace('$', '', $cost));
+    // $cost = floatval(str_replace('$', '', $cost));
     
     $startDateTime = new DateTime($startDatetime);
     $endDateTime = new DateTime($endDatetime);
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                 $chargePointId,
                 $startDatetime,
                 $endDatetime,
-                $cost
+                // $cost
             );
         
             if ($result) {
@@ -51,31 +51,30 @@ document.addEventListener("DOMContentLoaded", function() {
     const startDateInput = document.getElementById("startDate");
     const endDateInput = document.getElementById("endDate");
     const totalCostInput = document.getElementById("totalCost");
-    const pricePerKwh = 0.30; // This matches the price shown on your card
-    const powerOutput = 50; // kW - from your charger description
-    
-    // Calculate cost whenever dates change
+    const pricePerKwh = parseFloat(document.getElementById("pricePerKwh").value);
+    const powerOutput = parseFloat(document.getElementById("powerOutput").value);
+
     function calculateCost() {
         const startDate = new Date(startDateInput.value);
         const endDate = new Date(endDateInput.value);
-        
+
         if (startDate && endDate && endDate > startDate) {
-            // Calculate time difference in hours
-            const timeDiff = (endDate - startDate) / (1000 * 60 * 60);
-            
-            // Assume 80% of rated power output
-            const estimatedKwh = timeDiff * powerOutput * 0.8;
+            const timeDiff = (endDate - startDate) / (1000 * 60 * 60); // hours
+            const estimatedKwh = timeDiff * powerOutput * 0.8; // 80% efficiency
             const cost = estimatedKwh * pricePerKwh;
-            
+
             totalCostInput.value = "$" + cost.toFixed(2);
         } else {
             totalCostInput.value = "$0.00";
         }
     }
-    
+
+    // 🔥 Add these event listeners:
     startDateInput.addEventListener("change", calculateCost);
     endDateInput.addEventListener("change", calculateCost);
 });
+</script>
+
 </script>
 ';
 

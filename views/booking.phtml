@@ -7,13 +7,13 @@
                     <h1 class="fw-bold text-white display-5">Book Your Charging Point</h1>
                 </div>
             </div>
-            
+
             <?php if (!empty($view->message)): ?>
-            <div class="alert <?php echo strpos($view->message, 'successful') !== false ? 'alert-success' : 'alert-danger'; ?> mb-4">
-                <?php echo $view->message; ?>
-            </div>
+                <div class="alert <?php echo strpos($view->message, 'successful') !== false ? 'alert-success' : 'alert-danger'; ?> mb-4">
+                    <?php echo $view->message; ?>
+                </div>
             <?php endif; ?>
-            
+
             <div class="row">
                 <div class="col-12 col-md-6 mb-4">
                     <div class="card bg-dark text-white">
@@ -36,7 +36,9 @@
                             <h5 class="card-title mb-4">Booking Details</h5>
                             <form method="POST" action="booking.php">
                                 <input type="hidden" name="charge_point_id" value="1">
-                                
+                                <input type="hidden" id="pricePerKwh" value="<?php echo htmlspecialchars($pricePerKwh); ?>">
+                                <input type="hidden" id="powerOutput" value="<?php echo htmlspecialchars($powerOutput); ?>">
+
                                 <div class="mb-3">
                                     <label for="startDate" class="form-label">Start Date</label>
                                     <input type="date" class="form-control" id="startDate" name="start_datetime" required>
