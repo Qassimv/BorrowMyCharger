@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,36 +24,44 @@ if (session_status() === PHP_SESSION_NONE) {
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
                 <div class="d-flex align-items-center gap-3">
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <!-- USER IS LOGGED IN: Show Profile and Logout -->
-                        <div class="d-flex align-items-center gap-0">
-                        <a class="d-flex align-items-center justify-content-center rounded-3 bg-dark text-decoration-none" style="background-color: #27313A; height: 36px; min-width: 0; padding: 0 10px;"  onclick="window.location.href='ownerProfile.php'" asp-area="" asp-controller="Home" asp-action="Profile">
-                            <div class="text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
-                                    <path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"></path>
-                                </svg>
+                        <!-- USER IS LOGGED IN -->
+
+                        <?php if ($_SESSION['role'] === 'homeowner' || $_SESSION['role'] === 'user'): ?>
+                            <!-- OWNER PROFILE ICON -->
+                            <div class="d-flex align-items-center gap-0">
+                                <a class="d-flex align-items-center justify-content-center rounded-3 bg-dark text-decoration-none"
+                                    style="background-color: #27313A; height: 36px; min-width: 0; padding: 0 10px;"
+                                    href="ownerProfile.php">
+                                    <div class="text-white">
+                                        <!-- SVG icon here -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
+                                            <path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"></path>
+                                        </svg>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                    </div>
+                        <?php elseif ($_SESSION['role'] === 'admin'): ?>
+                            <!-- ADMIN PROFILE ICON -->
+                            <div class="d-flex align-items-center gap-0">
+                                <a class="d-flex align-items-center justify-content-center rounded-3 bg-dark text-decoration-none"
+                                    style="background-color: #27313A; height: 36px; min-width: 0; padding: 0 10px;"
+                                    href="adminProfile.php">
+                                    <div class="text-white">
+                                        <!-- SVG icon here -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
+                                            <path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"></path>
+                                        </svg>
+                                    </div>
+                                </a>
+                            </div>
+                        <?php endif; ?>
 
-                        <div class="d-flex align-items-center gap-0">
-                            <a class="d-flex align-items-center justify-content-center rounded-3 bg-dark text-decoration-none"
-                                style="background-color: #27313A; height: 36px; min-width: 0; padding: 0 10px;"
-                                href="adminProfile.php">
-                                <div class="text-white">
-                                    <!-- Profile Icon SVG -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
-                                        <path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"></path>
-                                    </svg>
-                                </div>
-                            </a>
-                        </div>
-
+                        <!-- LOGOUT BUTTON (always show if logged in) -->
                         <div class="d-flex align-items-center gap-0">
                             <a class="d-flex align-items-center justify-content-center rounded-3 bg-dark text-decoration-none"
                                 style="background-color: #27313A; height: 36px; min-width: 0; padding: 0 10px;"
                                 href="logout.php">
                                 <div class="text-white">
-                                    <!-- Logout Icon SVG -->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M16 13v-2H7V8l-5 4 5 4v-3h9zM20 3h-8v2h8v14h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
                                     </svg>
@@ -61,12 +70,11 @@ if (session_status() === PHP_SESSION_NONE) {
                         </div>
 
                     <?php else: ?>
-                        <!-- USER IS LOGGED OUT: Show Register and Login -->
-
+                        <!-- USER IS LOGGED OUT -->
                         <a class="text-white text-sm fw-medium text-decoration-none" href="Register.php">Register</a>
                         <a class="text-white text-sm fw-medium text-decoration-none" href="Login.php">Login</a>
-
                     <?php endif; ?>
+
                 </div>
 
 

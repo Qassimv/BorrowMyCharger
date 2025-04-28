@@ -21,22 +21,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($user) {
-        // Verify password
-        if (password_verify($password, $user['passHash'])) {
-            if ($user['is_approved']) {
-                // Regenerate session to prevent session fixation attacks
-                session_regenerate_id(true);
-                $_SESSION['user_id'] = $user['user_id'];
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['role'] = $user['role'];
+        // First check if password is hashed, and then compare accordingly
+        if (password_get_info($user['passHash'])['algoName'] !== 'unknown') {
+            // If it's hashed, verify it
+            if (password_verify($password, $user['passHash'])) {
+                if ($user['is_approved']) {
+                    // Regenerate session to prevent session fixation attacks
+                    session_regenerate_id(true);
+                    $_SESSION['user_id'] = $user['user_id'];
+                    $_SESSION['username'] = $user['username'];
+                    $_SESSION['role'] = $user['role'];
 
-                header("Location: index.php");
-                exit;
+                    header("Location: index.php");
+                    exit;
+                } else {
+                    $error = "Your account is not approved yet.";
+                }
             } else {
-                $error = "Your account is not approved yet.";
+                $error = "Invalid username or password.";
             }
         } else {
-            $error = "Invalid username or password.";
+            // If the password is not hashed, compare plain text
+            if ($password === $user['passHash']) {
+                if ($user['is_approved']) {
+                    // Regenerate session to prevent session fixation attacks
+                    session_regenerate_id(true);
+                    $_SESSION['user_id'] = $user['user_id'];
+                    $_SESSION['username'] = $user['username'];
+                    $_SESSION['role'] = $user['role'];
+
+                    header("Location: index.php");
+                    exit;
+                } else {
+                    $error = "Your account is not approved yet.";
+                }
+            } else {
+                $error = "Invalid username or password.";
+            }
         }
     } else {
         $error = "Invalid username or password.";
@@ -44,5 +65,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 require_once 'views/Login.phtml';
-
-?>
