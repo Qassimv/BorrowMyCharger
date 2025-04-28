@@ -10,6 +10,16 @@ $amount = isset($_GET['amount']) ? htmlspecialchars($_GET['amount']) : '0.00';
                 <div class="card bg-dark text-white shadow">
                     <div class="card-body p-4">
                         <h3 class="h5 mb-3">Make a Payment</h3>
+                        <?php if (!empty($view->errors)): ?>
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    <?php foreach ($view->errors as $error): ?>
+                                        <li><?php echo htmlspecialchars($error); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+
                         <form method="post" action="payment.php">
                             <div class="mb-3">
                                 <label for="cardNumber" class="form-label">Card Number</label>

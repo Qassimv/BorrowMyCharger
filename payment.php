@@ -4,6 +4,7 @@ ini_set('display_errors', 1);
 
 $view = new stdClass();
 $view->pageTitle = 'payment';
+$view->errors = []; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once('models/PaymentModel.php');
@@ -42,7 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!empty($errors)) {
-        header('Location: payment.php?status=failed&error=' . urlencode(implode(', ', $errors)));
+        $view->errors = $errors;
+        $amount = htmlspecialchars($_POST['amount']); 
+        require_once(__DIR__ . '/views/payment.phtml');
         exit;
     }
 
@@ -53,7 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: payment.php?status=success');
         exit;
     } else {
-        header('Location: payment.php?status=failed');
+        $view->errors[] = "Payment failed. Please try again.";
+        require_once(__DIR__ . '/views/payment.phtml');
         exit;
     }
 } else {
