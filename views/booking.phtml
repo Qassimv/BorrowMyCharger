@@ -1,4 +1,5 @@
 <?php require('template/header.phtml') ?>
+
 <div class="container-fluid py-5 custom-bg">
     <div class="row justify-content-center">
         <div class="col-12 col-lg-8">
@@ -23,9 +24,9 @@
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">DC Fast Charger - Location A</h5>
-                            <p class="card-text text-secondary">Price: $0.30 per kWh</p>
+                            <p class="card-text text-secondary">Price: $<?php echo htmlspecialchars(number_format($view->pricePerKwh, 2)); ?> per kWh</p>
                             <p class="card-text text-secondary">Availability: 24/7</p>
-                            <p class="card-text text-secondary">Power Output: 50 kW</p>
+                            <p class="card-text text-secondary">Power Output: <?php echo htmlspecialchars($view->powerOutput); ?> kW</p>
                             <p class="card-text text-secondary">Connector Type: CCS</p>
                         </div>
                     </div>
@@ -36,8 +37,8 @@
                             <h5 class="card-title mb-4">Booking Details</h5>
                             <form method="POST" action="booking.php">
                                 <input type="hidden" name="charge_point_id" value="1">
-                                <input type="hidden" id="pricePerKwh" value="<?php echo htmlspecialchars($pricePerKwh); ?>">
-                                <input type="hidden" id="powerOutput" value="<?php echo htmlspecialchars($powerOutput); ?>">
+                                <input type="hidden" id="pricePerKwh" value="<?php echo htmlspecialchars($view->pricePerKwh); ?>">
+                                <input type="hidden" id="powerOutput" value="<?php echo htmlspecialchars($view->powerOutput); ?>">
 
                                 <div class="mb-3">
                                     <label for="startDate" class="form-label">Start Date</label>
@@ -57,6 +58,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
