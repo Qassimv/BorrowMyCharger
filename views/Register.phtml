@@ -2,18 +2,18 @@
 
 <div class="d-flex justify-content-center align-items-center h-100 custom-bg">
     <div class="dcustom-bg p-4 rounded" style="max-width: 400px;">
-        <form method="post" asp-action="Register">
+        <form method="post" action="register.php">
             <div class="mb-3">
-                <label for="name" class="form-label fw-bold text-light">Full Name</label>
-                <input type="text" id="name" name="FullName"
+                <label for="full_name" class="form-label fw-bold text-light">Full Name</label>
+                <input type="text" id="full_name" name="FullName"
                     class="form-control bg-secondary bg-opacity-25 border-secondary text-white"
                     placeholder="Enter your full name" required>
             </div>
             <div class="mb-3">
-                <label for="email" class="form-label fw-bold text-light">Email Address</label>
-                <input type="email" id="email" name="Email"
+                <label for="username" class="form-label fw-bold text-light">Username</label>
+                <input type="text" id="username" name="Username"
                     class="form-control bg-secondary bg-opacity-25 border-secondary text-white"
-                    placeholder="Enter your email" required>
+                    placeholder="Choose a username" required>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label fw-bold text-light">Password</label>
@@ -21,11 +21,17 @@
                     class="form-control bg-secondary bg-opacity-25 border-secondary text-white"
                     placeholder="Create a password" required>
             </div>
+            
+            <!-- Display error messages here -->
+            <?php if (isset($registration_error)) { ?>
+                <div class="alert alert-danger"><?php echo $registration_error; ?></div>
+            <?php } ?>
+
             <div class="text-center mt-4">
-                <button type="submit" class="custom-btn">Register</button>
+                <button type="submit" class="custom-btn btn btn-primary">Register</button>
             </div>
             <div class="text-center mt-3 text-white">
-                Already have an account? <a asp-action="Login" class="custom-link" onclick="window.location.href='Login.php'">Login here</a>
+                Already have an account? <a href="Login.php" class="custom-link">Login here</a>
             </div>
         </form>
     </div>
