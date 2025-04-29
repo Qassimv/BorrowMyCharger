@@ -27,18 +27,19 @@ class AllBookingRequestsModel
             }
 
             $sql = "
-                SELECT 
-                    b.booking_id AS request_id, 
-                    b.start_datetime AS start_date, 
-                    b.end_datetime AS end_date, 
+                SELECT
+                    b.booking_id AS request_id,
+                    b.start_datetime AS start_date,
+                    b.end_datetime AS end_date,
+                    b.status,
                     cp.address AS location
-                FROM 
+                FROM
                     bookings_pr b
-                INNER JOIN 
+                INNER JOIN
                     charge_points_pr cp ON b.charge_point_id = cp.charge_point_id
-                WHERE 
+                WHERE
                     cp.user_id = :user_id
-                ORDER BY 
+                ORDER BY
                     b.start_datetime DESC
             ";
 

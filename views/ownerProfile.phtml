@@ -49,6 +49,12 @@
                                                 <?= htmlspecialchars(date('d.m.Y', strtotime($request['start_date']))) ?> -
                                                 <?= htmlspecialchars(date('d.m.Y', strtotime($request['end_date']))) ?>
                                             </p>
+                                            <p class="mb-1">
+                                                <strong>Status:</strong>
+                                                <span class="<?= $request['status'] === 'Pending' ? 'text-warning' : ($request['status'] === 'Approved' ? 'text-success' : 'text-danger') ?>">
+                                                    <?= htmlspecialchars($request['status']) ?>
+                                                </span>
+                                            </p>
                                         </div>
                                         <div>
                                             <a href="bookingDetails.php?id=<?= htmlspecialchars($request['request_id']) ?>" class="btn btn-sm btn-outline-light fw-bold">View</a>
