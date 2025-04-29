@@ -42,13 +42,14 @@
                                 <input type="hidden" id="powerOutput" value="<?php echo htmlspecialchars($view->powerOutput); ?>">
 
                                 <div class="mb-3">
-                                    <label for="startDate" class="form-label">Start Date</label>
-                                    <input type="date" class="form-control" id="startDate" name="start_datetime" required>
+                                    <label for="startDate" class="form-label">Start Date & Time</label>
+                                    <input type="datetime-local" class="form-control" id="startDate" name="start_datetime" step="60" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="endDate" class="form-label">End Date</label>
-                                    <input type="date" class="form-control" id="endDate" name="end_datetime" required>
+                                    <label for="endDate" class="form-label">End Date & Time</label>
+                                    <input type="datetime-local" class="form-control" id="endDate" name="end_datetime" required>
                                 </div>
+
                                 <div class="mb-3">
                                     <label for="totalCost" class="form-label">Estimated Total Cost</label>
                                     <input type="text" class="form-control" id="totalCost" name="cost" value="$0.00" readonly>
