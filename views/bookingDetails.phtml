@@ -39,7 +39,7 @@
                         <strong>Amount:</strong> <?= htmlspecialchars($view->bookingDetails['cost'] ?? '0') ?> BD
                     </p>
                     <p class="card-text text-secondary">
-                        <strong>User Email:</strong> <?= htmlspecialchars($view->bookingDetails['user_email']) ?>
+                        <strong>Username:</strong> <?= htmlspecialchars($view->bookingDetails['user_username']) ?>
                     </p>
                     <p class="card-text <?= $view->bookingDetails['status'] === 'Pending' ? 'text-warning' : ($view->bookingDetails['status'] === 'Approved' ? 'text-success' : 'text-danger') ?>">
                         <strong>Status:</strong> <?= htmlspecialchars($view->bookingDetails['status']) ?>

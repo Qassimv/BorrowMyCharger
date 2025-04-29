@@ -35,7 +35,7 @@ class BookingDetailsModel
                 cp.name,
                 cp.address AS location,
                 cp.price_per_kwh,
-                u.username AS user_username -- << changed from email to username
+                u.username AS user_username 
             FROM
                 bookings_pr b
             INNER JOIN
