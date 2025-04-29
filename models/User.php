@@ -23,18 +23,18 @@ class User
     }
 
     // Method to register a new user
-    public function register($username, $password, $full_name)
+    public function register($username, $password, $full_name, $role)
     {
         // Validate full name length (between 5 and 20 characters)
-        if (strlen($full_name) < 5 || strlen($full_name) > 20) {
-            return "Full name must be between 5 and 20 characters.";
+        if (strlen($full_name) < 4 || strlen($full_name) > 20) {
+            return "Full name must be between 4 and 20 characters.";
         }
 
         // Username can either be alphanumeric or an email
         if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
             // Valid email format, proceed with email validation
             $isEmail = true;
-        } elseif (!preg_match("/^[a-zA-Z0-9]{5,20}$/", $username)) {  // Changed to allow 4-20 characters
+        } elseif (!preg_match("/^[a-zA-Z0-9]{4,20}$/", $username)) {  // Changed to allow 4-20 characters
             return "Username must be alphanumeric and between 4-20 characters. Or an Email.";
         } else {
             $isEmail = false;
@@ -59,11 +59,12 @@ class User
 
         // Insert the new user into the database
         $sql = "INSERT INTO users_pr (username, passHash, full_name, role, is_approved) 
-        VALUES (:username, :passHash, :full_name, 'user', 0)";  // Default role 'user', not approved
+        VALUES (:username, :passHash, :full_name, :role, 0)";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':passHash', $passHash);
         $stmt->bindParam(':full_name', $full_name);
+        $stmt->bindParam(':role', $role);
 
         if ($stmt->execute()) {
             return true; // Registration successful
@@ -94,8 +95,27 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC);  // Return user data or false if not found
     }
 
+    // Method to fetch all users (for admin purposes)
+    public function getAllUsers()
+    {
+        $sql = "SELECT * FROM users_pr";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
 
-    // Method to approve a user (for admin purposes)
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);  // Return all users data
+    }
+
+    // Method to fetch a user by user_id
+    public function getUserById($userId)
+    {
+        $sql = "SELECT * FROM users_pr WHERE user_id = :user_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);  // Return user data or false if not found
+    }
+    // Method to approve a user
     public function approveUser($user_id)
     {
         $sql = "UPDATE users_pr SET is_approved = 1 WHERE user_id = :user_id";
@@ -105,13 +125,40 @@ class User
         return $stmt->execute();
     }
 
-    // Method to fetch all users (for admin purposes)
-    public function getAllUsers()
+    // Method to suspend a user
+    public function suspendUser($user_id)
     {
-        $sql = "SELECT * FROM users_pr";
+        $sql = "UPDATE users_pr SET is_approved = 0 WHERE user_id = :user_id";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute();
+        $stmt->bindParam(':user_id', $user_id);
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);  // Return all users data
+        return $stmt->execute();
+    }
+
+    // Method to delete a user
+    // Method to delete a user (ignoring foreign key constraints)
+    public function deleteUser($user_id)
+    {
+        try {
+            // Disable foreign key checks temporarily
+            $this->db->exec("SET FOREIGN_KEY_CHECKS = 0");
+
+            // Prepare SQL statement to delete the user
+            $sql = "DELETE FROM users_pr WHERE user_id = :user_id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':user_id', $user_id);
+
+            // Execute the delete query
+            $result = $stmt->execute();
+
+            // Re-enable foreign key checks
+            $this->db->exec("SET FOREIGN_KEY_CHECKS = 1");
+
+            return $result;
+        } catch (PDOException $e) {
+            // Handle any exceptions
+            echo "Error: " . $e->getMessage();
+            return false;
+        }
     }
 }

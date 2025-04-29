@@ -8,12 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $full_name = trim($_POST['FullName']);
     $username = trim($_POST['Username']);
     $password = trim($_POST['Password']);
+    $role = $_POST['Role'];
     
     // Create an instance of the User model
     $user = new User();
     
     // Call the register method
-    $registration_result = $user->register($username, $password, $full_name);
+    $registration_result = $user->register($username, $password, $full_name, $role);
     
     // Check the result and handle accordingly
     if ($registration_result === true) {
