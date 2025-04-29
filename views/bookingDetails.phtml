@@ -45,7 +45,7 @@
                         <strong>Status:</strong> <?= htmlspecialchars($view->bookingDetails['status']) ?>
                     </p>
                     
-                    <?php if ($view->bookingDetails['status'] === 'Pending'): ?>
+                    <?php if ($view->bookingDetails['status'] === 'Pending' && isset($_SESSION['role']) && $_SESSION['role'] === 'homeowner'): ?>
                         <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#acceptModal">Accept</button>
                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#declineModal">Decline</button>
                     <?php elseif ($view->bookingDetails['status'] === 'Approved'): ?>
@@ -59,6 +59,7 @@
     </div>
 </div>
 
+<?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'homeowner'): ?>
 <div class="modal fade" id="acceptModal" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content bg-dark text-white">
@@ -100,6 +101,7 @@
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <?php require('template/footer.phtml') ?>
