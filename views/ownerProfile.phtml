@@ -1,9 +1,16 @@
-<?php require('template/header.phtml') ?>
+<?php require('template/header.phtml'); ?>
+
 <div class="container-fluid py-5 custom-bg text-white min-vh-100">
     <div class="row justify-content-center">
         <div class="col-12 col-lg-10">
+            
+            <?php if (isset($view->errorMessage)): ?>
+                <div class="alert alert-danger">
+                    <?= htmlspecialchars($view->errorMessage) ?>
+                </div>
+            <?php endif; ?>
 
-            <?php if ($_SESSION['role'] === 'homeowner'): ?>
+            <?php if (isset($view->userRole) && $view->userRole === 'homeowner'): ?>
                 <div class="card bg-dark text-white shadow mb-4">
                     <div class="card-body p-4">
                         <h3 class="h5 mb-3">My Charging Point</h3>
@@ -30,28 +37,28 @@
                 <div class="card-body p-4">
                     <h3 class="h5 mb-3">All Booking Requests</h3>
                     <div id="chargingPointRequestsContainer">
-                        <div class="card bg-secondary text-white mb-3">
-                            <div class="card-body d-flex justify-content-between align-items-center">
-                                <div>
-                                    <p class="mb-1"><strong>Request ID:</strong> #123</p>
-                                    <p class="mb-1"><strong>Request Duration:</strong> 12.3.2025 - 13.3.2025</p>
+                        <?php if (!empty($view->requests)): ?>
+                            <?php foreach ($view->requests as $request): ?>
+                                <div class="card bg-secondary text-white mb-3">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p class="mb-1"><strong>Request ID:</strong> #<?= htmlspecialchars($request['request_id']) ?></p>
+                                            <p class="mb-1"><strong>Location:</strong> <?= htmlspecialchars($request['location']) ?></p>
+                                            <p class="mb-1">
+                                                <strong>Request Duration:</strong>
+                                                <?= htmlspecialchars(date('d.m.Y', strtotime($request['start_date']))) ?> -
+                                                <?= htmlspecialchars(date('d.m.Y', strtotime($request['end_date']))) ?>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-sm btn-outline-light fw-bold">View</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-light fw-bold">View</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card bg-secondary text-white mb-3">
-                            <div class="card-body d-flex justify-content-between align-items-center">
-                                <div>
-                                    <p class="mb-1"><strong>Request ID:</strong> #123</p>
-                                    <p class="mb-1"><strong>Request Duration:</strong> 12.3.2025 - 13.3.2025</p>
-                                </div>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-light fw-bold">View</button>
-                                </div>
-                            </div>
-                        </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p>No booking requests found for your charging points.</p>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
