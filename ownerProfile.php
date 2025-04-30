@@ -37,7 +37,8 @@ try {
                 'available_from' => $_POST['available_from'] ?? null,
                 'available_to' => $_POST['available_to'] ?? null,
                 'isAvailable' => $_POST['isAvailable'] ?? 'Not Available',
-                'image_path' => '' 
+                'image_path' => '',
+                'charger_type' => $_POST['charger_type'] ?? null // Added this line
             ];
 
             if (isset($_FILES['charger_image']) && $_FILES['charger_image']['error'] === UPLOAD_ERR_OK) {

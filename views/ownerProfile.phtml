@@ -18,33 +18,13 @@
                 </div>
             <?php endif; ?>
 
-            <?php if (isset($view->message) && !empty($view->message)): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <?php echo $view->message; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
-
-            <?php if (isset($view->error) && !empty($view->error)): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <?php echo $view->error; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
-
             <?php if (isset($view->errorMessage)): ?>
                 <div class="alert alert-danger">
                     <?= htmlspecialchars($view->errorMessage) ?>
                 </div>
             <?php endif; ?>
 
-            <?php if (isset($view->errorMessage)): ?>
-                <div class="alert alert-danger">
-                    <?= htmlspecialchars($view->errorMessage) ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if (isset($view->userRole) && $view->userRole === 'homeowner'): ?>
+            <?php if (isset($view->userRole) && $view->userRole === 'homeowner' || $_SESSION['role'] === 'homeowner'): ?>
                 <div class="card bg-dark text-white shadow mb-4">
                     <div class="card-body p-4">
                         <h3 class="h5 mb-3">My Charging Point</h3>
@@ -58,6 +38,7 @@
                                             <p class="mb-1"><strong>Postcode:</strong> <?php echo htmlspecialchars($view->chargePoint['postcode']); ?></p>
                                             <p class="mb-1"><strong>Price:</strong> <?php echo htmlspecialchars($view->chargePoint['price_per_kwh']); ?> BD/kWh</p>
                                             <p class="mb-1"><strong>Availability:</strong> <?php echo $view->chargePoint['isAvailable'] ? 'Available' : 'Not Available'; ?></p>
+                                            <p class="mb-1"><strong>Type:</strong> <?php echo htmlspecialchars($view->chargePoint['charger_type'] ?? 'Not specified'); ?></p>
                                         </div>
                                         <div class="d-flex gap-2">
                                             <button class="btn btn-sm btn-outline-light fw-bold"
@@ -192,6 +173,16 @@
                             <option value="Not Available">Not Available</option>
                         </select>
                     </div>
+                    
+                    <div class="mb-3">
+                        <label for="charger_type" class="form-label">Charger Type</label>
+                        <select class="form-select" id="charger_type" name="charger_type" required>
+                            <option value="">Select a charger type</option>
+                            <option value="DC Fast Charger">DC Fast Charger</option>
+                            <option value="Level 2 Charger">Level 2 Charger</option>
+                            <option value="Tesla Charger">Tesla Charger</option>
+                        </select>
+                    </div>
 
                     <div class="mb-3">
                         <label for="charger_image" class="form-label">Upload Charger Image</label>
@@ -282,6 +273,16 @@
                                 <option value="Not Available" <?php echo !$view->chargePoint['isAvailable'] ? 'selected' : ''; ?>>Not Available</option>
                             </select>
                         </div>
+                        
+                        <div class="mb-3">
+                            <label for="edit_charger_type" class="form-label">Charger Type</label>
+                            <select class="form-select" id="edit_charger_type" name="charger_type" required>
+                                <option value="">Select a charger type</option>
+                                <option value="DC Fast Charger" <?php echo $view->chargePoint['charger_type'] == 'DC Fast Charger' ? 'selected' : ''; ?>>DC Fast Charger</option>
+                                <option value="Level 2 Charger" <?php echo $view->chargePoint['charger_type'] == 'Level 2 Charger' ? 'selected' : ''; ?>>Level 2 Charger</option>
+                                <option value="Tesla Charger" <?php echo $view->chargePoint['charger_type'] == 'Tesla Charger' ? 'selected' : ''; ?>>Tesla Charger</option>
+                            </select>
+                        </div>
 
                         <div class="mb-3">
                             <label for="edit_charger_image" class="form-label">Upload Charger Image</label>
@@ -345,6 +346,11 @@
                     <div class="row mb-2">
                         <div class="col-4 fw-bold">Price:</div>
                         <div class="col-8"><?php echo htmlspecialchars($view->chargePoint['price_per_kwh']); ?> BD/kWh</div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col-4 fw-bold">Type:</div>
+                        <div class="col-8"><?php echo htmlspecialchars($view->chargePoint['charger_type'] ?? 'Not specified'); ?></div>
                     </div>
 
                     <div class="row mb-2">

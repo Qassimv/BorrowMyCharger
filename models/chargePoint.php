@@ -22,6 +22,7 @@ class ChargePoint
     public $image_path;
     public $status;
     public $created_at;
+    public $charger_type; // New property for charger type
 
     // Constructor to initialize the database connection
     public function __construct()
@@ -58,7 +59,8 @@ class ChargePoint
                 available_to, 
                 isAvailable, 
                 image_path, 
-                status
+                status,
+                charger_type
             ) VALUES (
                 :user_id, 
                 :name, 
@@ -71,7 +73,8 @@ class ChargePoint
                 :available_to, 
                 :isAvailable, 
                 :image_path,
-                'Approved'
+                'Approved',
+                :charger_type
             )";
 
         $stmt = $this->db->prepare($sql);
@@ -89,6 +92,7 @@ class ChargePoint
         $isAvailable = $data['isAvailable'] === 'Available' ? 1 : 0;
         $stmt->bindParam(':isAvailable', $isAvailable);
         $stmt->bindParam(':image_path', $data['image_path']);
+        $stmt->bindParam(':charger_type', $data['charger_type']);
 
         try {
             // Execute the query
@@ -140,7 +144,8 @@ class ChargePoint
                 price_per_kwh = :price_per_kwh, 
                 available_from = :available_from, 
                 available_to = :available_to, 
-                isAvailable = :isAvailable";
+                isAvailable = :isAvailable,
+                charger_type = :charger_type";
 
         // If image is updated, add it to the query
         if (!empty($data['image_path'])) {
@@ -162,6 +167,7 @@ class ChargePoint
         $stmt->bindParam(':available_to', $data['available_to']);
         $isAvailable = $data['isAvailable'] === 'Available' ? 1 : 0;
         $stmt->bindParam(':isAvailable', $isAvailable);
+        $stmt->bindParam(':charger_type', $data['charger_type']);
         
         // If image is updated, bind that parameter
         if (!empty($data['image_path'])) {
@@ -262,10 +268,23 @@ class ChargePoint
     // Method to get all unique charger types
     public function getAllChargerTypes()
     {
-        $sql = "SELECT DISTINCT name FROM charge_points_pr WHERE isAvailable = 1";
+        $sql = "SELECT DISTINCT charger_type FROM charge_points_pr WHERE isAvailable = 1 AND charger_type IS NOT NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    // Method to get charge points by type
+    public function getChargePointsByType($type)
+    {
+        $sql = "SELECT cp.*, u.username FROM charge_points_pr cp 
+                JOIN users_pr u ON cp.user_id = u.user_id
+                WHERE cp.isAvailable = 1 AND cp.charger_type = :type
+                ORDER BY cp.created_at DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':type', $type);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Helper method to upload an image
