@@ -1,0 +1,39 @@
+<?php require('template/header.phtml'); ?>
+
+<div class="d-flex justify-content-center align-items-center vh-100 custom-bg">
+    <div class="dcustom-bg p-4 rounded shadow-lg" style="max-width: 500px; width: 100%;">
+        <h2 class="text-white fw-bold mb-4 text-center">Contact the Homeowner</h2>
+
+        <?php if (!empty($view->message)): ?>
+            <div class="alert <?php echo (strpos($view->message, 'sent') !== false) ? 'alert-success' : 'alert-danger'; ?> text-center">
+                <?php echo $view->message; ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="contactHomeowner.php">
+            <input type="hidden" name="charge_point_id" value="<?php echo htmlspecialchars($_GET['charge_point_id'] ?? 1); ?>">
+
+            <div class="mb-3">
+                <label for="subject" class="form-label fw-bold text-light">Subject</label>
+                <input type="text" id="subject" name="subject"
+                    class="form-control bg-secondary bg-opacity-25 border-secondary text-white"
+                    placeholder="Enter the subject" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="message" class="form-label fw-bold text-light">Message</label>
+                <textarea id="message" name="message" rows="6"
+                    class="form-control bg-secondary bg-opacity-25 border-secondary text-white"
+                    placeholder="Write your message..." required></textarea>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" name="submit_contact" class="custom-btn btn btn-primary w-100 fw-bold">
+                    Send Message
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<?php require('template/footer.phtml'); ?>
