@@ -2,14 +2,14 @@
 <div class="container-fluid py-5 custom-bg text-white min-vh-100">
     <div class="row justify-content-center">
         <div class="col-12 col-lg-10">
-            
+
             <?php if (isset($view->message) && !empty($view->message)): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <?php echo $view->message; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php endif; ?>
-            
+
             <?php if (isset($view->error) && !empty($view->error)): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <?php echo $view->error; ?>
@@ -32,17 +32,18 @@
                                             <p class="mb-1"><strong>Price:</strong> <?php echo htmlspecialchars($view->chargePoint['price_per_kwh']); ?> BD/kWh</p>
                                             <p class="mb-1"><strong>Availability:</strong> <?php echo $view->chargePoint['isAvailable'] ? 'Available' : 'Not Available'; ?></p>
                                         </div>
-                                        <div>
-                                            <button class="btn btn-sm btn-outline-light fw-bold mb-2" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#viewChargingPointModal">View</button>
-                                            <form method="post" class="d-inline">
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-sm btn-outline-light fw-bold"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#viewChargingPointModal">View</button>
+                                            <form method="post">
                                                 <input type="hidden" name="action" value="delete">
                                                 <input type="hidden" name="charge_point_id" value="<?php echo $view->chargePoint['charge_point_id']; ?>">
-                                                <button type="submit" class="btn btn-sm btn-danger fw-bold" 
-                                                        onclick="return confirm('Are you sure you want to delete this charging point?')">Delete</button>
+                                                <button type="submit" class="btn btn-sm btn-danger fw-bold"
+                                                    onclick="return confirm('Are you sure you want to delete this charging point?')">Delete</button>
                                             </form>
                                         </div>
+
                                     </div>
                                 </div>
                             <?php else: ?>
@@ -105,22 +106,22 @@
             <div class="modal-body">
                 <form id="addChargingPointForm" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="add">
-                    
+
                     <div class="mb-3">
                         <label for="name" class="form-label">Charger Name</label>
                         <input type="text" class="form-control" id="name" name="name" placeholder="Enter charger name" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="address" class="form-label">Location</label>
                         <input type="text" class="form-control" id="address" name="address" placeholder="Enter address" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="postcode" class="form-label">Postcode</label>
                         <input type="text" class="form-control" id="postcode" name="postcode" placeholder="Enter postcode" required>
                     </div>
-                    
+
                     <div class="row mb-3">
                         <div class="col">
                             <label for="latitude" class="form-label">Latitude</label>
@@ -131,7 +132,7 @@
                             <input type="number" step="0.000001" class="form-control" id="longitude" name="longitude" placeholder="Enter longitude">
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="price_per_kwh" class="form-label">Price</label>
                         <div class="input-group">
@@ -139,7 +140,7 @@
                             <span class="input-group-text">BD/kWh</span>
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
                         <div class="col">
                             <label for="available_from" class="form-label">Available From</label>
@@ -150,7 +151,7 @@
                             <input type="time" class="form-control" id="available_to" name="available_to">
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="isAvailable" class="form-label">Availability</label>
                         <select class="form-select" id="isAvailable" name="isAvailable">
@@ -158,12 +159,12 @@
                             <option value="Not Available">Not Available</option>
                         </select>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="charger_image" class="form-label">Upload Charger Image</label>
                         <input type="file" class="form-control" id="charger_image" name="charger_image" accept="image/*">
                     </div>
-                    
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Add Charging Point</button>
@@ -184,88 +185,88 @@
             </div>
             <div class="modal-body">
                 <?php if (isset($view->chargePoint) && $view->chargePoint): ?>
-                <form id="editChargingPointForm" method="post" enctype="multipart/form-data">
-                    <input type="hidden" name="action" value="update">
-                    <input type="hidden" name="charge_point_id" value="<?php echo $view->chargePoint['charge_point_id']; ?>">
-                    
-                    <div class="mb-3">
-                        <label for="edit_name" class="form-label">Charger Name</label>
-                        <input type="text" class="form-control" id="edit_name" name="name" 
-                               value="<?php echo htmlspecialchars($view->chargePoint['name']); ?>" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="edit_address" class="form-label">Location</label>
-                        <input type="text" class="form-control" id="edit_address" name="address" 
-                               value="<?php echo htmlspecialchars($view->chargePoint['address']); ?>" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="edit_postcode" class="form-label">Postcode</label>
-                        <input type="text" class="form-control" id="edit_postcode" name="postcode" 
-                               value="<?php echo htmlspecialchars($view->chargePoint['postcode']); ?>" required>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label for="edit_latitude" class="form-label">Latitude</label>
-                            <input type="number" step="0.000001" class="form-control" id="edit_latitude" name="latitude" 
-                                   value="<?php echo htmlspecialchars($view->chargePoint['latitude']); ?>">
+                    <form id="editChargingPointForm" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="update">
+                        <input type="hidden" name="charge_point_id" value="<?php echo $view->chargePoint['charge_point_id']; ?>">
+
+                        <div class="mb-3">
+                            <label for="edit_name" class="form-label">Charger Name</label>
+                            <input type="text" class="form-control" id="edit_name" name="name"
+                                value="<?php echo htmlspecialchars($view->chargePoint['name']); ?>" required>
                         </div>
-                        <div class="col">
-                            <label for="edit_longitude" class="form-label">Longitude</label>
-                            <input type="number" step="0.000001" class="form-control" id="edit_longitude" name="longitude" 
-                                   value="<?php echo htmlspecialchars($view->chargePoint['longitude']); ?>">
+
+                        <div class="mb-3">
+                            <label for="edit_address" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="edit_address" name="address"
+                                value="<?php echo htmlspecialchars($view->chargePoint['address']); ?>" required>
                         </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="edit_price_per_kwh" class="form-label">Price</label>
-                        <div class="input-group">
-                            <input type="number" step="0.01" class="form-control" id="edit_price_per_kwh" name="price_per_kwh" 
-                                   value="<?php echo htmlspecialchars($view->chargePoint['price_per_kwh']); ?>" required>
-                            <span class="input-group-text">BD/kWh</span>
+
+                        <div class="mb-3">
+                            <label for="edit_postcode" class="form-label">Postcode</label>
+                            <input type="text" class="form-control" id="edit_postcode" name="postcode"
+                                value="<?php echo htmlspecialchars($view->chargePoint['postcode']); ?>" required>
                         </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label for="edit_available_from" class="form-label">Available From</label>
-                            <input type="time" class="form-control" id="edit_available_from" name="available_from" 
-                                   value="<?php echo htmlspecialchars($view->chargePoint['available_from']); ?>">
-                        </div>
-                        <div class="col">
-                            <label for="edit_available_to" class="form-label">Available To</label>
-                            <input type="time" class="form-control" id="edit_available_to" name="available_to" 
-                                   value="<?php echo htmlspecialchars($view->chargePoint['available_to']); ?>">
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="edit_isAvailable" class="form-label">Availability</label>
-                        <select class="form-select" id="edit_isAvailable" name="isAvailable">
-                            <option value="Available" <?php echo $view->chargePoint['isAvailable'] ? 'selected' : ''; ?>>Available</option>
-                            <option value="Not Available" <?php echo !$view->chargePoint['isAvailable'] ? 'selected' : ''; ?>>Not Available</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="edit_charger_image" class="form-label">Upload Charger Image</label>
-                        <input type="file" class="form-control" id="edit_charger_image" name="charger_image" accept="image/*">
-                        <?php if (!empty($view->chargePoint['image_path'])): ?>
-                            <div class="mt-2">
-                                <p>Current image:</p>
-                                <img src="<?php echo htmlspecialchars($view->chargePoint['image_path']); ?>" 
-                                     alt="Charger image" class="img-thumbnail" style="max-width: 200px;">
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="edit_latitude" class="form-label">Latitude</label>
+                                <input type="number" step="0.000001" class="form-control" id="edit_latitude" name="latitude"
+                                    value="<?php echo htmlspecialchars($view->chargePoint['latitude']); ?>">
                             </div>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update Charging Point</button>
-                    </div>
-                </form>
+                            <div class="col">
+                                <label for="edit_longitude" class="form-label">Longitude</label>
+                                <input type="number" step="0.000001" class="form-control" id="edit_longitude" name="longitude"
+                                    value="<?php echo htmlspecialchars($view->chargePoint['longitude']); ?>">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit_price_per_kwh" class="form-label">Price</label>
+                            <div class="input-group">
+                                <input type="number" step="0.01" class="form-control" id="edit_price_per_kwh" name="price_per_kwh"
+                                    value="<?php echo htmlspecialchars($view->chargePoint['price_per_kwh']); ?>" required>
+                                <span class="input-group-text">BD/kWh</span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="edit_available_from" class="form-label">Available From</label>
+                                <input type="time" class="form-control" id="edit_available_from" name="available_from"
+                                    value="<?php echo htmlspecialchars($view->chargePoint['available_from']); ?>">
+                            </div>
+                            <div class="col">
+                                <label for="edit_available_to" class="form-label">Available To</label>
+                                <input type="time" class="form-control" id="edit_available_to" name="available_to"
+                                    value="<?php echo htmlspecialchars($view->chargePoint['available_to']); ?>">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit_isAvailable" class="form-label">Availability</label>
+                            <select class="form-select" id="edit_isAvailable" name="isAvailable">
+                                <option value="Available" <?php echo $view->chargePoint['isAvailable'] ? 'selected' : ''; ?>>Available</option>
+                                <option value="Not Available" <?php echo !$view->chargePoint['isAvailable'] ? 'selected' : ''; ?>>Not Available</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit_charger_image" class="form-label">Upload Charger Image</label>
+                            <input type="file" class="form-control" id="edit_charger_image" name="charger_image" accept="image/*">
+                            <?php if (!empty($view->chargePoint['image_path'])): ?>
+                                <div class="mt-2">
+                                    <p>Current image:</p>
+                                    <img src="<?php echo htmlspecialchars($view->chargePoint['image_path']); ?>"
+                                        alt="Charger image" class="img-thumbnail" style="max-width: 200px;">
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Update Charging Point</button>
+                        </div>
+                    </form>
                 <?php endif; ?>
             </div>
         </div>
@@ -284,47 +285,47 @@
                 <?php if (isset($view->chargePoint) && $view->chargePoint): ?>
                     <div class="text-center mb-3">
                         <?php if (!empty($view->chargePoint['image_path'])): ?>
-                            <img src="<?php echo htmlspecialchars($view->chargePoint['image_path']); ?>" 
-                                 alt="Charger image" class="img-fluid rounded" style="max-height: 200px;">
+                            <img src="<?php echo htmlspecialchars($view->chargePoint['image_path']); ?>"
+                                alt="Charger image" class="img-fluid rounded" style="max-height: 200px;">
                         <?php else: ?>
                             <div class="bg-secondary p-4 rounded">
                                 <p class="mb-0">No image available</p>
                             </div>
                         <?php endif; ?>
                     </div>
-                    
+
                     <div class="row mb-2">
                         <div class="col-4 fw-bold">Name:</div>
                         <div class="col-8"><?php echo htmlspecialchars($view->chargePoint['name']); ?></div>
                     </div>
-                    
+
                     <div class="row mb-2">
                         <div class="col-4 fw-bold">Address:</div>
                         <div class="col-8"><?php echo htmlspecialchars($view->chargePoint['address']); ?></div>
                     </div>
-                    
+
                     <div class="row mb-2">
                         <div class="col-4 fw-bold">Postcode:</div>
                         <div class="col-8"><?php echo htmlspecialchars($view->chargePoint['postcode']); ?></div>
                     </div>
-                    
+
                     <div class="row mb-2">
                         <div class="col-4 fw-bold">Price:</div>
                         <div class="col-8"><?php echo htmlspecialchars($view->chargePoint['price_per_kwh']); ?> BD/kWh</div>
                     </div>
-                    
+
                     <div class="row mb-2">
                         <div class="col-4 fw-bold">Available Hours:</div>
                         <div class="col-8">
                             <?php if ($view->chargePoint['available_from'] && $view->chargePoint['available_to']): ?>
-                                <?php echo htmlspecialchars($view->chargePoint['available_from']); ?> - 
+                                <?php echo htmlspecialchars($view->chargePoint['available_from']); ?> -
                                 <?php echo htmlspecialchars($view->chargePoint['available_to']); ?>
                             <?php else: ?>
                                 Not specified
                             <?php endif; ?>
                         </div>
                     </div>
-                    
+
                     <div class="row mb-2">
                         <div class="col-4 fw-bold">Availability:</div>
                         <div class="col-8">
@@ -333,12 +334,12 @@
                             </span>
                         </div>
                     </div>
-                    
+
                     <?php if ($view->chargePoint['latitude'] && $view->chargePoint['longitude']): ?>
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Coordinates:</div>
                             <div class="col-8">
-                                <?php echo htmlspecialchars($view->chargePoint['latitude']); ?>, 
+                                <?php echo htmlspecialchars($view->chargePoint['latitude']); ?>,
                                 <?php echo htmlspecialchars($view->chargePoint['longitude']); ?>
                             </div>
                         </div>
