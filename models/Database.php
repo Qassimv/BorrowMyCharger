@@ -1,4 +1,4 @@
-
+<!-- database.php -->
 <?php
 
 class Database

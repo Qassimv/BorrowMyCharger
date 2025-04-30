@@ -2,7 +2,7 @@
 <div class="container-fluid py-5 custom-bg">
     <div class="row justify-content-center">
         <div class="col-12 col-lg-10">
-        <div class="col-12">
+            <div class="col-12">
                 <h2 class="fw-bold text-white mb-4">Admin</h2>
             </div>
             <div class="card bg-dark text-white shadow mb-4">
@@ -38,54 +38,66 @@
                 </div>
             </div>
             <div class="card bg-dark text-white shadow mb-4">
-    <div class="card-body p-4">
-        <h3 class="h5 mb-3">User Accounts</h3>
-        <div id="userAccountsContainer">
-            <div class="card bg-secondary text-white mb-3">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                        <p class="mb-1"><strong>User ID:</strong> #101</p>
-                        <p class="mb-1"><strong>Name:</strong> John Doe</p>
-                        <p class="mb-1"><strong>Email:</strong> john.doe@example.com</p>
-                        <p class="mb-1"><strong>Status:</strong> Active</p>
-                    </div>
-                    <div>
-                        <button class="btn btn-sm btn-outline-light fw-bold" onclick="window.location.href='userAccAdmin.php'">View</button>
-                    </div>
-                </div>
-            </div>
-            <div class="card bg-secondary text-white mb-3">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                        <p class="mb-1"><strong>User ID:</strong> #102</p>
-                        <p class="mb-1"><strong>Name:</strong> Jane Smith</p>
-                        <p class="mb-1"><strong>Email:</strong> jane.smith@example.com</p>
-                        <p class="mb-1"><strong>Status:</strong> Active</p>
-                    </div>
-                    <div>
-                        <button class="btn btn-sm btn-outline-light fw-bold" onclick="window.location.href='userAccAdmin.php'">View</button>
-                    </div>
-                </div>
-            </div>
-            <div class="card bg-secondary text-white mb-3">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                        <p class="mb-1"><strong>User ID:</strong> #103</p>
-                        <p class="mb-1"><strong>Name:</strong> Michael Johnson</p>
-                        <p class="mb-1"><strong>Email:</strong> michael.johnson@example.com</p>
-                        <p class="mb-1"><strong>Status:</strong> Pending</p>
-                    </div>
-                    <div>
-                        <button class="btn btn-sm btn-outline-light fw-bold" onclick="window.location.href='userAccAdmin.php'">View</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-4">User Accounts</h2>
 
-<!-- Generate SQL Queries Card -->
-<div class="card bg-dark text-white shadow mb-4">
+                    <!-- Awaiting Approval Section -->
+                    <h3 class="h5 mb-3">Awaiting Approval</h3>
+                    <div id="awaitingApprovalContainer">
+                        <?php
+                        $pendingUsers = array_filter($view->users, fn($user) => $user['is_approved'] == 0);
+                        if (empty($pendingUsers)):
+                        ?>
+                            <p>None awaiting approval</p>
+                        <?php else: ?>
+                            <?php foreach ($pendingUsers as $user): ?>
+                                <div class="card bg-secondary text-white mb-3">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p class="mb-1"><strong>User ID:</strong> #<?= htmlspecialchars($user['user_id']) ?></p>
+                                            <p class="mb-1"><strong>Username:</strong> <?= htmlspecialchars($user['username']) ?></p>
+                                            <p class="mb-1"><strong>Full Name:</strong> <?= htmlspecialchars($user['full_name']) ?></p>
+                                            <p class="mb-1"><strong>Role:</strong> <?= htmlspecialchars($user['role']) ?></p>
+                                            <p class="mb-1"><strong>Status:</strong> Pending</p>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-sm btn-outline-light fw-bold" onclick="window.location.href='userAccAdmin.php?id=<?= $user['user_id'] ?>'">View</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Approved Users Section -->
+                    <h3 class="h5 mt-4 mb-3">Approved Users</h3>
+                    <div id="approvedUsersContainer">
+                        <?php foreach ($view->users as $user): ?>
+                            <?php if ($user['is_approved'] == 1): ?>
+                                <div class="card bg-secondary text-white mb-3">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p class="mb-1"><strong>User ID:</strong> #<?= htmlspecialchars($user['user_id']) ?></p>
+                                            <p class="mb-1"><strong>Username:</strong> <?= htmlspecialchars($user['username']) ?></p>
+                                            <p class="mb-1"><strong>Full Name:</strong> <?= htmlspecialchars($user['full_name']) ?></p>
+                                            <p class="mb-1"><strong>Role:</strong> <?= htmlspecialchars($user['role']) ?></p>
+                                            <p class="mb-1"><strong>Status:</strong> Active</p>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-sm btn-outline-light fw-bold" onclick="window.location.href='userAccAdmin.php?id=<?= $user['user_id'] ?>'">View</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Generate SQL Queries Card -->
+            <div class="card bg-dark text-white shadow mb-4">
                 <div class="card-body p-4">
                     <h3 class="h5 mb-3">Generate System Reports</h3>
                     <p class="mb-3">Use the text area below to enter SQL queries for generating system reports:</p>

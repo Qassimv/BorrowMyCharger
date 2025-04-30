@@ -21,7 +21,15 @@
                     class="form-control bg-secondary bg-opacity-25 border-secondary text-white"
                     placeholder="Create a password" required>
             </div>
-            
+            <div class="mb-3">
+                <label for="role" class="form-label fw-bold text-light">Select Role</label>
+                <select id="role" name="Role"
+                    class="form-control bg-secondary bg-opacity-25 border-secondary text-white" required>
+                    <option value="user">User</option>
+                    <option value="homeowner">Homeowner</option>
+                </select>
+            </div>
+
             <!-- Display error messages here -->
             <?php if (isset($registration_error)) { ?>
                 <div class="alert alert-danger"><?php echo $registration_error; ?></div>
