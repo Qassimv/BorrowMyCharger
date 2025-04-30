@@ -1,3 +1,5 @@
+<!-- user.php -->
+
 <?php
 
 require_once 'Database.php';
