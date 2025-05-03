@@ -3,31 +3,39 @@
     <div class="row justify-content-center">
         <div class="col-12 col-lg-10">
             <div class="mb-5">
-                <div class="d-flex gap-2">
-                    <input type="text" id="searchLocation" class="form-control bg-dark text-white border-secondary"
-                        placeholder="Enter a location...">
-                    <button class="btn custom-btn fw-bold">Search</button>
+                <div class="card bg-dark text-white p-3">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label for="searchLocation" class="form-label">Search Location</label>
+                            <input type="text" id="searchLocation" class="form-control bg-dark text-white border-secondary"
+                                placeholder="Enter a location...">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="filterType" class="form-label">Filter by Type</label>
+                            <select id="filterType" class="form-select bg-dark text-white border-secondary" onchange="filterMarkersByType(this.value)">
+                                <option value="all">All Types</option>
+                                <option value="dc fast charger">DC Fast Charger</option>
+                                <option value="level 2 charger">Level 2 Charger</option>
+                                <option value="tesla charger">Tesla Charger</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="card bg-dark text-white shadow">
                 <div class="card-body p-4">
                     <h3 class="h5 mb-3">Charging Points on Map</h3>
-                    <div class="ratio ratio-16x9">
-                        <iframe
-                            id="googleMap"
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.1259999999997!2d55.27041541500905!3d25.19751498389333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f43348a67e24b%3A0xff45e502e1ceb7e2!2sBurj%20Khalifa!5e0!3m2!1sen!2sae!4v1633081234567!5m2!1sen!2sae"
-                            width="600"
-                            height="450"
-                            style="border:0;"
-                            allowfullscreen=""
-                            loading="lazy">
-                        </iframe>
-                    </div>
+                    <div id="map" style="width: 100%; height: 500px; border-radius: 0.5rem;"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Load Google Maps API with Places library -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDzAb81QA4ozgEdDgbI_pnqPla7rFvkWgU&libraries=places&callback=initMap" async defer></script>
+<!-- Load custom maps script -->
+<script src="js/maps.js"></script>
 
 <?php require('template/footer.phtml') ?>
