@@ -30,10 +30,7 @@
                         <strong>End Date:</strong> <?= htmlspecialchars(date('d.m.Y H:i', strtotime($view->bookingDetails['end_datetime']))) ?>
                     </p>
                     <p class="card-text text-secondary">
-                        <strong>Charging Point:</strong> <?= htmlspecialchars($view->bookingDetails['connector_type'] ?? 'Not specified') ?> - <?= htmlspecialchars($view->bookingDetails['location']) ?>
-                    </p>
-                    <p class="card-text text-secondary">
-                        <strong>Power Output:</strong> <?= htmlspecialchars($view->bookingDetails['power_output'] ?? 'Not specified') ?> kW
+                        <strong>Charging Point:</strong> <?= htmlspecialchars($view->bookingDetails['charger_type'] ?? 'Not specified') ?> - <?= htmlspecialchars($view->bookingDetails['location']) ?>
                     </p>
                     <p class="card-text text-secondary">
                         <strong>Amount:</strong> <?= htmlspecialchars($view->bookingDetails['cost'] ?? '0') ?> BD

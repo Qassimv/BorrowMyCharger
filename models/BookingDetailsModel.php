@@ -33,6 +33,7 @@ class BookingDetailsModel
                 b.status,
                 b.cost,
                 cp.name,
+                cp.charger_type,
                 cp.address AS location,
                 cp.price_per_kwh,
                 u.username AS user_username 

@@ -24,7 +24,6 @@ try {
     } else {
         $view->chargePoint = $chargePoint;
         $view->pricePerKwh = (float)$chargePoint['price_per_kwh'];
-        $view->powerOutput = isset($chargePoint['power_output']) ? $chargePoint['power_output'] : 150; // Use DB value or default
     }
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
