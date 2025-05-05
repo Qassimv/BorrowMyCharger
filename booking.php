@@ -1,31 +1,36 @@
 <?php
 session_start();
 require_once('models/BookingModel.php');
+require_once('models/ChargePoint.php');
 require_once('models/Database.php');
+
 $view = new stdClass();
-$view->pageTitle = 'booking';
+$view->pageTitle = 'Booking';
 $view->message = '';
+
 try {
-    $db = Database::getInstance();
-    $dbConnection = $db->getdbConnection();
-    $chargePointId = 1; // hardcoded for now
-    $stmt = $dbConnection->prepare("SELECT price_per_kwh FROM charge_points_pr WHERE charge_point_id = :id");
-    $stmt->bindParam(':id', $chargePointId, PDO::PARAM_INT);
-    $stmt->execute();
-    $chargePoint = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($chargePoint) {
-        $view->pricePerKwh = (float)$chargePoint['price_per_kwh'];
-    } else {
-        $view->pricePerKwh = 0.30; // Default if not set in db
+    $chargePointId = isset($_GET['id']) ? filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT) : null;
+    
+    if (!$chargePointId) {
+        header('Location: index.php');
+        exit;
     }
     
-    $view->powerOutput = 150; 
+    $chargePointModel = new ChargePoint();
+    $chargePoint = $chargePointModel->getChargePointById($chargePointId);
+    
+    if (!$chargePoint) {
+        $view->message = 'Charging point not found.';
+    } else {
+        $view->chargePoint = $chargePoint;
+        $view->pricePerKwh = (float)$chargePoint['price_per_kwh'];
+        $view->powerOutput = isset($chargePoint['power_output']) ? $chargePoint['power_output'] : 150; // Use DB value or default
+    }
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
-        $chargePointId = filter_input(INPUT_POST, 'charge_point_id', FILTER_VALIDATE_INT);
+        $submittedChargePointId = filter_input(INPUT_POST, 'charge_point_id', FILTER_VALIDATE_INT);
         $startDatetime = filter_input(INPUT_POST, 'start_datetime');
         $endDatetime = filter_input(INPUT_POST, 'end_datetime');
-    
         
         $startDateTime = new DateTime($startDatetime);
         $endDateTime = new DateTime($endDatetime);
@@ -39,7 +44,7 @@ try {
             try {
                 $bookingModel = new BookingModel();
                 $result = $bookingModel->createBooking(
-                    $chargePointId,
+                    $submittedChargePointId,
                     $startDatetime,
                     $endDatetime,
                     $view->pricePerKwh
@@ -58,34 +63,35 @@ try {
     
     $view->script = '
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const startDateInput = document.getElementById("startDate");
-        const endDateInput = document.getElementById("endDate");
-        const totalCostInput = document.getElementById("totalCost");
-        const pricePerKwh = parseFloat(document.getElementById("pricePerKwh").value);
-        const AVG_KWH_PER_HOUR = 10; // Fixed average usage
-        
-        function calculateCost() {
-            const startDate = new Date(startDateInput.value);
-            const endDate = new Date(endDateInput.value);
+        document.addEventListener("DOMContentLoaded", function() {
+            const startDateInput = document.getElementById("startDate");
+            const endDateInput = document.getElementById("endDate");
+            const totalCostInput = document.getElementById("totalCost");
+            const pricePerKwh = parseFloat(document.getElementById("pricePerKwh").value);
+            const AVG_KWH_PER_HOUR = 10; // Fixed average usage
             
-            if (startDate && endDate && endDate >= startDate) {
-                const hours = (endDate - startDate) / (1000 * 60 * 60);
-                const estimatedKwh = hours * AVG_KWH_PER_HOUR;
-                const cost = estimatedKwh * pricePerKwh;
-                totalCostInput.value = "$" + cost.toFixed(2);
-            } else {
-                totalCostInput.value = "$0.00";
+            function calculateCost() {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+                
+                if (startDate && endDate && endDate >= startDate) {
+                    const hours = (endDate - startDate) / (1000 * 60 * 60);
+                    const estimatedKwh = hours * AVG_KWH_PER_HOUR;
+                    const cost = estimatedKwh * pricePerKwh;
+                    totalCostInput.value = "$" + cost.toFixed(2);
+                } else {
+                    totalCostInput.value = "$0.00";
+                }
             }
-        }
-        
-        startDateInput.addEventListener("change", calculateCost);
-        endDateInput.addEventListener("change", calculateCost);
-    });
+            
+            startDateInput.addEventListener("change", calculateCost);
+            endDateInput.addEventListener("change", calculateCost);
+        });
     </script>
     ';
     
     require_once(__DIR__ . '/views/booking.phtml');
+    
 } catch (Exception $e) {
     error_log("Booking Page Error: " . $e->getMessage());
     echo "Error loading booking page: " . $e->getMessage();
