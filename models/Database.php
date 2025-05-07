@@ -1,9 +1,10 @@
 <?php
 class Database
 {
-    private $LOCAL_DB = 0;
+    //private $LOCAL_DB = 0;
+    private $LOCAL_DB = 1; // Set to 1 for local 
     protected $dbc = NULL;
-
+    
     public function getConnection()
     {
         if ($this->dbc === NULL) {
@@ -14,10 +15,10 @@ class Database
                     $username = 'u202202979';
                     $password = 'u202202979';
                 } else {
-                    $host = 'localhost';
-                    $dbname = 'dbStudentID';
-                    $username = 'uStudentID';
-                    $password = 'uStudentID';
+                    $host = '20.126.5.244';
+                    $dbname = 'db202202979';
+                    $username = 'u202202979';
+                    $password = 'u202202979';
                 }
 
                 $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
@@ -40,5 +41,7 @@ class Database
     {
         $this->dbc = NULL; // PDO closes connection when set to NULL
     }
+    
+     
 }
 ?>
