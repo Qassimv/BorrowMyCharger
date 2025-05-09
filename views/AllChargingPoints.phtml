@@ -9,16 +9,12 @@
                         placeholder="Search charging points...">
                     <select id="filterChargingPoints" class="form-select bg-dark text-white border-secondary">
                         <option value="all">All</option>
-                        <?php if (isset($view->filterTypes) && !empty($view->filterTypes)): ?>
-                            <?php foreach($view->filterTypes as $type): ?>
-                                <option value="<?php echo htmlspecialchars(strtolower(str_replace(' ', '-', $type))); ?>">
-                                    <?php echo htmlspecialchars($type); ?>
+                        <?php if (!empty($view->chargerTypes)): ?>
+                            <?php foreach($view->chargerTypes as $type): ?>
+                                <option value="<?= htmlspecialchars(strtolower(str_replace(' ', '-', $type))) ?>">
+                                    <?= htmlspecialchars($type) ?>
                                 </option>
                             <?php endforeach; ?>
-                        <?php else: ?>
-                            <option value="dc-fast-charger">DC Fast Charger</option>
-                            <option value="level-2-charger">Level 2 Charger</option>
-                            <option value="tesla-charger">Tesla Charger</option>
                         <?php endif; ?>
                     </select>
                 </div>
@@ -27,43 +23,46 @@
             <h2 class="text-white fw-bold fs-3 mb-3">All Charging Points</h2>
 
             <div class="row" id="chargingPointsContainer">
-                <?php if (isset($view->chargePoints) && !empty($view->chargePoints)): ?>
-                    <?php foreach ($view->chargePoints as $chargePoint): ?>
+                <?php if (!empty($view->chargingPoints)): ?>
+                    <?php foreach ($view->chargingPoints as $point): ?>
                         <div class="col-12 col-md-6 col-lg-3 mb-4 charging-point-card" 
-                             data-type="<?php echo htmlspecialchars(strtolower(str_replace(' ', '-', $chargePoint['charger_type'] ?? ''))); ?>"
-                             data-name="<?php echo htmlspecialchars($chargePoint['name']); ?>"
-                             data-address="<?php echo htmlspecialchars($chargePoint['address']); ?>">
+                             data-type="<?= htmlspecialchars(strtolower(str_replace(' ', '-', $point['charger_type'] ?? ''))) ?>"
+                             data-name="<?= htmlspecialchars($point['name'] ?? '') ?>"
+                             data-address="<?= htmlspecialchars($point['address'] ?? '') ?>">
                             <div class="card bg-dark text-white">
                                 <?php 
-                                $bgImage = 'images/Level 2 Charger.png'; // Default image
-                                if (!empty($chargePoint['image_path'])) {
-                                    $bgImage = $chargePoint['image_path'];
-                                } else if ($chargePoint['charger_type'] == 'DC Fast Charger') {
-                                    $bgImage = 'images/DC Fast Charger.jpg';
-                                } else if ($chargePoint['charger_type'] == 'Tesla Charger') {
-                                    $bgImage = 'images/tesla charger.webp';
-                                }
+                                    $bgImage = 'images/default.jpg'; // fallback
+                                    if (!empty($point['image_path'])) {
+                                        $bgImage = htmlspecialchars($point['image_path']);
+                                    } elseif (!empty($point['charger_type'])) {
+                                        $type = strtolower($point['charger_type']);
+                                        if ($type === 'dc fast charger') $bgImage = 'images/DC Fast Charger.jpg';
+                                        elseif ($type === 'tesla charger') $bgImage = 'images/tesla charger.webp';
+                                        elseif ($type === 'level 2 charger') $bgImage = 'images/Level 2 Charger.png';
+                                    }
                                 ?>
                                 <div class="card-img-top bg-image" 
-                                    style="background-image: url('<?php echo htmlspecialchars($bgImage); ?>'); 
+                                    style="background-image: url('<?= $bgImage ?>'); 
                                     background-size: cover; background-position: center; aspect-ratio: 16/9;">
                                 </div>
                                 <div class="card-body d-flex flex-column">
                                     <div>
-                                        <h5 class="card-title"><?php echo htmlspecialchars($chargePoint['name']); ?> - <?php echo htmlspecialchars($chargePoint['address']); ?></h5>
-                                        <p class="card-text text-secondary">Price: <?php echo htmlspecialchars($chargePoint['price_per_kwh']); ?> BD per kWh</p>
+                                        <h5 class="card-title"><?= htmlspecialchars($point['name'] ?? '') ?> - <?= htmlspecialchars($point['address'] ?? '') ?></h5>
+                                        <p class="card-text text-secondary">Price: <?= htmlspecialchars($point['price_per_kwh'] ?? 'N/A') ?> BD per kWh</p>
                                         <p class="card-text text-secondary">
                                             Availability: 
-                                            <?php if ($chargePoint['available_from'] && $chargePoint['available_to']): ?>
-                                                <?php echo htmlspecialchars($chargePoint['available_from']); ?> - <?php echo htmlspecialchars($chargePoint['available_to']); ?>
+                                            <?php if (!empty($point['available_from']) && !empty($point['available_to'])): ?>
+                                                <?= htmlspecialchars($point['available_from']) ?> - <?= htmlspecialchars($point['available_to']) ?>
                                             <?php else: ?>
                                                 24/7
                                             <?php endif; ?>
                                         </p>
-                                        <p class="card-text text-secondary">Owner: <?php echo htmlspecialchars($chargePoint['username']); ?></p>
+                                        <?php if (!empty($point['username'])): ?>
+                                            <p class="card-text text-secondary">Owner: <?= htmlspecialchars($point['username']) ?></p>
+                                        <?php endif; ?>
                                     </div>
                                     <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'user'): ?>
-                                        <a href="booking.php?id=<?php echo $chargePoint['charge_point_id']; ?>" class="btn custom-btn mt-4 w-100 fw-bold">Book Now</a>
+                                        <a href="booking.php?id=<?= $point['charge_point_id'] ?>" class="btn custom-btn mt-4 w-100 fw-bold">Book Now</a>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -94,21 +93,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const name = card.dataset.name.toLowerCase();
             const address = card.dataset.address.toLowerCase();
             const type = card.dataset.type;
-            
-            // Apply filters
+
             const matchesSearch = name.includes(searchTerm) || address.includes(searchTerm);
             const matchesType = filterType === 'all' || type.includes(filterType);
-            
-            // Show/hide based on filters
-            if (matchesSearch && matchesType) {
-                card.style.display = 'block';
-            } else {
-                card.style.display = 'none';
-            }
+
+            card.style.display = matchesSearch && matchesType ? 'block' : 'none';
         });
     }
 
-    // Add event listeners
     searchInput.addEventListener('input', filterChargingPoints);
     filterSelect.addEventListener('change', filterChargingPoints);
 });

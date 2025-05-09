@@ -59,4 +59,6 @@ class Database
     {
         $this->_dbHandle = null; // destroys the PDO handle when no longer needed  longer needed
     }
+    
+     
 }
