@@ -190,10 +190,10 @@ class ChargePoint
     }
 
     // Method to delete a charge point
-    public function deleteChargePoint($charge_point_id, $user_id)
+    public function deleteChargePoint($charge_point_id, $user_id = null, $isAdmin = false)
     {
-        // Check if the charge point belongs to the user
-        if (!$this->isChargePointOwner($charge_point_id, $user_id)) {
+        // If not admin, check if the charge point belongs to the user
+        if (!$isAdmin && !$this->isChargePointOwner($charge_point_id, $user_id)) {
             return "You don't have permission to delete this charging point.";
         }
 
@@ -215,10 +215,16 @@ class ChargePoint
             }
             
             // If no bookings exist, proceed with deletion
-            $sql = "DELETE FROM charge_points_pr WHERE charge_point_id = :charge_point_id AND user_id = :user_id";
+            $sql = "DELETE FROM charge_points_pr WHERE charge_point_id = :charge_point_id";
+            if (!$isAdmin) {
+                $sql .= " AND user_id = :user_id";
+            }
+            
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':charge_point_id', $charge_point_id);
-            $stmt->bindParam(':user_id', $user_id);
+            if (!$isAdmin) {
+                $stmt->bindParam(':user_id', $user_id);
+            }
             $stmt->execute();
             
             // Commit transaction
@@ -253,12 +259,12 @@ class ChargePoint
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     
-    // Method to get all charge points
+    // Method to get all charge points (admin function)
     public function getAllChargePoints()
     {
-        $sql = "SELECT cp.*, u.username FROM charge_points_pr cp 
-                JOIN users_pr u ON cp.user_id = u.user_id
-                WHERE cp.isAvailable = 1
+        $sql = "SELECT cp.*, u.username 
+                FROM charge_points_pr cp 
+                LEFT JOIN users_pr u ON cp.user_id = u.user_id 
                 ORDER BY cp.created_at DESC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
@@ -288,41 +294,79 @@ class ChargePoint
     }
 
     // Helper method to upload an image
-    public function uploadImage($file)
-    {
+    public function uploadImage($file) {
         $target_dir = "uploads/charge_points/";
-        
+
         // Create directory if it doesn't exist
         if (!file_exists($target_dir)) {
             mkdir($target_dir, 0777, true);
         }
-        
+
         $fileName = basename($file["name"]);
         $imageFileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-        $newFileName = uniqid() . '.' . $imageFileType;
+        $newFileName = uniqid() . '.' . $imageFileType; // Generate a unique file name
         $target_file = $target_dir . $newFileName;
-        
-        // Check if image file is a actual image
+
+        // Debugging: Log the target file path
+        error_log("Target file: " . $target_file);
+
+        // Check if image file is a valid image
         $check = getimagesize($file["tmp_name"]);
         if ($check === false) {
+            error_log("File is not an image.");
             return "File is not an image.";
         }
-        
+
         // Check file size (limit to 5MB)
         if ($file["size"] > 5000000) {
+            error_log("File is too large: " . $file["size"]);
             return "Sorry, your file is too large.";
         }
-        
+
         // Allow certain file formats
-        if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+        if (!in_array($imageFileType, ['jpg', 'jpeg', 'png', 'gif'])) {
+            error_log("Invalid file format: " . $imageFileType);
             return "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
         }
-        
+
         // Try to upload the file
         if (move_uploaded_file($file["tmp_name"], $target_file)) {
-            return $target_file;
+            error_log("File uploaded successfully: " . $target_file);
+            return $target_file; // Return the relative path to the uploaded file
         } else {
+            error_log("Failed to move uploaded file.");
             return "Sorry, there was an error uploading your file.";
+        }
+    }
+
+    // Method to update a charge point (admin version)
+    public function updateChargePointAdmin($data, $charge_point_id) {
+        try {
+            $sql = "UPDATE charge_points_pr 
+                    SET name = :name, address = :address, postcode = :postcode, latitude = :latitude, 
+                        longitude = :longitude, price_per_kwh = :price_per_kwh, available_from = :available_from, 
+                        available_to = :available_to, isAvailable = :isAvailable, charger_type = :charger_type, 
+                        image_path = :image_path, status = :status 
+                    WHERE charge_point_id = :charge_point_id";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':name', $data['name']);
+            $stmt->bindParam(':address', $data['address']);
+            $stmt->bindParam(':postcode', $data['postcode']);
+            $stmt->bindParam(':latitude', $data['latitude']);
+            $stmt->bindParam(':longitude', $data['longitude']);
+            $stmt->bindParam(':price_per_kwh', $data['price_per_kwh']);
+            $stmt->bindParam(':available_from', $data['available_from']);
+            $stmt->bindParam(':available_to', $data['available_to']);
+            $stmt->bindParam(':isAvailable', $data['isAvailable'], PDO::PARAM_INT);
+            $stmt->bindParam(':charger_type', $data['charger_type']);
+            $stmt->bindParam(':image_path', $data['image_path']);
+            $stmt->bindParam(':status', $data['status']);
+            $stmt->bindParam(':charge_point_id', $charge_point_id, PDO::PARAM_INT);
+
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            return 'Database error: ' . $e->getMessage();
         }
     }
 }

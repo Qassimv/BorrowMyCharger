@@ -1,18 +1,38 @@
 <?php
-// Include the User model
-require_once 'models/User.php';
+session_start();
 
-// Create an instance of the User class
-$userModel = new User();
+// Check if user is admin
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header('Location: index.php');
+    exit;
+}
 
-// Fetch all users
-$users = $userModel->getAllUsers();
+require_once('models/Database.php');
+require_once('models/ChargePoint.php');
 
-// Prepare data for the view
+// Initialize view object
 $view = new stdClass();
-$view->pageTitle = 'Admin Profile';
-$view->users = $users;
 
-// Include the view
-require_once(__DIR__ . '/views/adminProfile.phtml');
-?>
+// Get all charge points
+$chargePoint = new ChargePoint();
+$view->chargePoints = $chargePoint->getAllChargePoints();
+
+// Get all users
+$db = Database::getInstance()->getdbConnection();
+$stmt = $db->prepare("SELECT * FROM users_pr ORDER BY created_at DESC");
+$stmt->execute();
+$view->users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Check for query results in session
+if (isset($_SESSION['queryResults'])) {
+    $view->queryResults = $_SESSION['queryResults'];
+    unset($_SESSION['queryResults']);
+}
+
+// Check for errors in session
+if (isset($_SESSION['error'])) {
+    $view->error = $_SESSION['error'];
+    unset($_SESSION['error']);
+}
+
+require_once('views/adminprofile.phtml'); 
