@@ -10,9 +10,11 @@ header('Content-Type: application/json');
 try {
     // Include database connection
     require_once('../models/Database.php');
+    require_once('../models/ChargePoint.php');
     
     // Create database connection
     $db = Database::getInstance()->getdbConnection();
+    $chargePoint = new ChargePoint();
     
     // Prepare SQL query
     $sql = "SELECT cp.*, u.username FROM charge_points_pr cp 
@@ -48,10 +50,15 @@ try {
     // Fetch all results
     $chargingPoints = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
+    // Add user role to each charging point
+    foreach ($chargingPoints as &$point) {
+        $point['userRole'] = $_SESSION['role'] ?? 'guest'; // Default to 'guest' if not logged in
+    }
+
     // Return JSON response
     echo json_encode($chargingPoints);
     
 } catch (Exception $e) {
     // Return error as JSON
-    echo json_encode(['error' => $e->getMessage()]);
+    echo json_encode(['error' => 'Failed to fetch charging points: ' . $e->getMessage()]);
 }

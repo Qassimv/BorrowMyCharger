@@ -249,6 +249,15 @@ function addChargingPointMarker(point) {
         title: point.name
     });
 
+    // Debugging: Log marker creation
+    console.log("Marker created for:", point.name);
+
+    // Add click listener to open modal with charging point details
+    marker.addListener("click", () => {
+        console.log("Marker clicked for:", point.name); // Debugging: Log marker click
+        showChargingPointDetails(point);
+    });
+
     markers.push(marker);
 }
 
@@ -535,3 +544,50 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+function showChargingPointDetails(point) {
+    console.log("Showing details for:", point);
+
+    // Populate the modal with charging point details
+    const modalTitle = document.getElementById("chargingPointModalLabel");
+    const modalBody = document.getElementById("chargingPointModalBody");
+    const modalFooter = document.getElementById("chargingPointModalFooter");
+
+    if (!modalTitle || !modalBody || !modalFooter) {
+        console.error("Modal elements not found!");
+        return;
+    }
+
+    modalTitle.textContent = point.name;
+
+    modalBody.innerHTML = `
+        <p><strong>Location:</strong> ${point.address}</p>
+        <p><strong>Postcode:</strong> ${point.postcode}</p>
+        <p><strong>Price:</strong> ${point.price_per_kwh} BD/kWh</p>
+        <p><strong>Availability:</strong> ${point.isAvailable ? "Available" : "Not Available"}</p>
+        <p><strong>Type:</strong> ${point.charger_type || "Not specified"}</p>
+        <p><strong>Coordinates:</strong> ${point.latitude}, ${point.longitude}</p>
+    `;
+
+    // Add "Book Now" button for users
+    modalFooter.innerHTML = "";
+    if (point.userRole === "user") {
+        modalFooter.innerHTML = `
+            <button class="btn btn-primary" onclick="bookChargingPoint(${point.charge_point_id})">Book Now</button>
+        `;
+    }
+
+    // Debugging: Log modal content
+    console.log("Modal content populated for:", point.name);
+
+    // Show the modal
+    const chargingPointModal = new bootstrap.Modal(document.getElementById("chargingPointModal"));
+    chargingPointModal.show();
+}
+
+function bookChargingPoint(chargePointId) {
+    console.log("Booking charging point:", chargePointId);
+
+    // Redirect to booking page or send an AJAX request to book the charging point
+    window.location.href = `booking.php?charge_point_id=${chargePointId}`;
+}
