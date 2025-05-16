@@ -338,35 +338,33 @@ class ChargePoint
             return "Sorry, there was an error uploading your file.";
         }
     }
+    
+    //pagination
+      public function getPaginatedChargePoints($limit, $offset)
+    {
+        $sql = "SELECT cp.*, u.username FROM charge_points_pr cp 
+                JOIN users_pr u ON cp.user_id = u.user_id
+                WHERE cp.isAvailable = 1
+                ORDER BY cp.created_at DESC
+                LIMIT :limit OFFSET :offset";
 
-    // Method to update a charge point (admin version)
-    public function updateChargePointAdmin($data, $charge_point_id) {
-        try {
-            $sql = "UPDATE charge_points_pr 
-                    SET name = :name, address = :address, postcode = :postcode, latitude = :latitude, 
-                        longitude = :longitude, price_per_kwh = :price_per_kwh, available_from = :available_from, 
-                        available_to = :available_to, isAvailable = :isAvailable, charger_type = :charger_type, 
-                        image_path = :image_path, status = :status 
-                    WHERE charge_point_id = :charge_point_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':name', $data['name']);
-            $stmt->bindParam(':address', $data['address']);
-            $stmt->bindParam(':postcode', $data['postcode']);
-            $stmt->bindParam(':latitude', $data['latitude']);
-            $stmt->bindParam(':longitude', $data['longitude']);
-            $stmt->bindParam(':price_per_kwh', $data['price_per_kwh']);
-            $stmt->bindParam(':available_from', $data['available_from']);
-            $stmt->bindParam(':available_to', $data['available_to']);
-            $stmt->bindParam(':isAvailable', $data['isAvailable'], PDO::PARAM_INT);
-            $stmt->bindParam(':charger_type', $data['charger_type']);
-            $stmt->bindParam(':image_path', $data['image_path']);
-            $stmt->bindParam(':status', $data['status']);
-            $stmt->bindParam(':charge_point_id', $charge_point_id, PDO::PARAM_INT);
-
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            return 'Database error: ' . $e->getMessage();
-        }
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    
+    public function getTotalChargePointsCount()
+    {
+        $sql = "SELECT COUNT(*) FROM charge_points_pr WHERE isAvailable = 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
+    
+    
 }
