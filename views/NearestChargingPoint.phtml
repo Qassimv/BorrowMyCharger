@@ -37,5 +37,25 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDzAb81QA4ozgEdDgbI_pnqPla7rFvkWgU&libraries=places&callback=initMap" async defer></script>
 <!-- Load custom maps script -->
 <script src="js/maps.js"></script>
+<!-- Load Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Charging Point Details Modal -->
+<div class="modal fade" id="chargingPointModal" tabindex="-1" aria-labelledby="chargingPointModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+                <h5 class="modal-title" id="chargingPointModalLabel">Charging Point Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="chargingPointModalBody">
+                <!-- Charging point details will be dynamically populated here -->
+            </div>
+            <div class="modal-footer" id="chargingPointModalFooter">
+                <!-- "Book Now" button will be dynamically added here for users -->
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php require('template/footer.phtml') ?>
