@@ -325,4 +325,33 @@ class ChargePoint
             return "Sorry, there was an error uploading your file.";
         }
     }
+    
+    //pagination
+      public function getPaginatedChargePoints($limit, $offset)
+    {
+        $sql = "SELECT cp.*, u.username FROM charge_points_pr cp 
+                JOIN users_pr u ON cp.user_id = u.user_id
+                WHERE cp.isAvailable = 1
+                ORDER BY cp.created_at DESC
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    
+    public function getTotalChargePointsCount()
+    {
+        $sql = "SELECT COUNT(*) FROM charge_points_pr WHERE isAvailable = 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
+    
+    
 }

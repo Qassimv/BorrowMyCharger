@@ -78,6 +78,28 @@
         </div>
     </div>
 </div>
+<!-- Pagination Controls -->
+<?php if (!empty($view->totalChargePoints) && $view->totalChargePoints > $view->limit): ?>
+    <div class="row">
+        <div class="col-12 text-center mt-4">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <?php
+                    $totalPages = ceil($view->totalChargePoints / $view->limit);
+                    for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <li class="page-item <?= ($i === $view->currentPage) ? 'active' : '' ?>">
+                            <a class="page-link bg-dark text-white border-secondary" href="?page=<?= $i ?>">
+                                <?= $i ?>
+                            </a>
+                        </li>
+                    <?php endfor; ?>
+                </ul>
+            </nav>
+        </div>
+    </div>
+<?php endif; ?>
+
+
 
 <script>
 // Client-side search and filtering
