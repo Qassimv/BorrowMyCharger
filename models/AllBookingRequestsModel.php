@@ -14,18 +14,20 @@ class AllBookingRequestsModel
         }
     }
 
-    public function getBookingRequestsForUser($userId)
-    {
-        if (!$userId) {
-            throw new Exception("Invalid user ID provided.");
+    public function getBookingRequestsForUser($userId, $userRole)
+{
+    if (!$userId) {
+        throw new Exception("Invalid user ID provided.");
+    }
+
+    try {
+        $conn = $this->db->getdbConnection();
+        if (!$conn) {
+            throw new Exception("Database connection failed.");
         }
 
-        try {
-            $conn = $this->db->getdbConnection();
-            if (!$conn) {
-                throw new Exception("Database connection failed.");
-            }
-
+        if ($userRole === 'homeowner') {
+            // Get bookings for charge points owned by this user
             $sql = "
                 SELECT
                     b.booking_id AS request_id,
@@ -42,14 +44,33 @@ class AllBookingRequestsModel
                 ORDER BY
                     b.start_datetime DESC
             ";
-
-            $stmt = $conn->prepare($sql);
-            $stmt->execute(['user_id' => $userId]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-        } catch (Exception $e) {
-            error_log("AllBookingRequestsModel::getBookingRequestsForUser Error: " . $e->getMessage());
-            throw $e;
+        } else {
+            // Get bookings made by this user
+            $sql = "
+                SELECT
+                    b.booking_id AS request_id,
+                    b.start_datetime AS start_date,
+                    b.end_datetime AS end_date,
+                    b.status,
+                    cp.address AS location
+                FROM
+                    bookings_pr b
+                INNER JOIN
+                    charge_points_pr cp ON b.charge_point_id = cp.charge_point_id
+                WHERE
+                    b.user_id = :user_id
+                ORDER BY
+                    b.start_datetime DESC
+            ";
         }
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['user_id' => $userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+    } catch (Exception $e) {
+        error_log("AllBookingRequestsModel::getBookingRequestsForUser Error: " . $e->getMessage());
+        throw $e;
     }
+}
 }

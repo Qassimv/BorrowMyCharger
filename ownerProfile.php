@@ -23,8 +23,8 @@ try {
     $view->chargePoint = $chargePoint;
 
     $bookingRequestModel = new AllBookingRequestsModel();
-    $view->requests = $bookingRequestModel->getBookingRequestsForUser($_SESSION['user_id']);
-
+$bookingRequestModel = new AllBookingRequestsModel();
+$view->requests = $bookingRequestModel->getBookingRequestsForUser($_SESSION['user_id'], $_SESSION['role']);
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['action']) && ($_POST['action'] === 'add' || $_POST['action'] === 'update')) {
             $chargePointData = [
@@ -95,8 +95,8 @@ try {
             
             if ($result) {
                 $view->message = "Booking status updated successfully!";
-                $view->requests = $bookingRequestModel->getBookingRequestsForUser($_SESSION['user_id']);
-            } else {
+$bookingRequestModel = new AllBookingRequestsModel();
+$view->requests = $bookingRequestModel->getBookingRequestsForUser($_SESSION['user_id'], $_SESSION['role']);            } else {
                 $view->error = "Failed to update booking status.";
             }
         }

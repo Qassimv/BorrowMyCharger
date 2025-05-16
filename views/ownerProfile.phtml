@@ -71,7 +71,9 @@
 
             <div class="card bg-dark text-white shadow mb-4">
                 <div class="card-body p-4">
-                    <h3 class="h5 mb-3">All Booking Requests</h3>
+                    <h3 class="h5 mb-3">
+    <?= $view->userRole === 'homeowner' ? 'All Booking Requests for My Charging Points' : 'My Booking Requests' ?>
+</h3>
                     <div id="chargingPointRequestsContainer">
                         <?php if (!empty($view->requests)): ?>
                             <?php foreach ($view->requests as $request): ?>
