@@ -12,10 +12,12 @@ if (!isset($_SESSION['user_id'])) {
 
 try {
     $userId = $_SESSION['user_id'];
+    $userRole = $_SESSION['role'] ?? 'user';
+    
     $model = new AllBookingRequestsModel();
-    $requests = $model->getBookingRequestsForUser($userId);
+    $requests = $model->getBookingRequestsForUser($userId, $userRole);
     echo json_encode($requests);
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Server error']);
+    echo json_encode(['error' => 'Server error: ' . $e->getMessage()]);
 }
