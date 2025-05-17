@@ -314,64 +314,66 @@
 
 <script>
 function editChargePoint(id) {
-    // Fetch the charge point data via AJAX
-    fetch(`ajax/getChargePoint.php?id=${id}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.error) {
-                alert(data.error);
-            } else {
-                // Populate the modal fields with the charge point data
-                document.getElementById('edit_charge_point_id').value = data.charge_point_id;
-                document.getElementById('edit_name').value = data.name;
-                document.getElementById('edit_address').value = data.address;
-                document.getElementById('edit_postcode').value = data.postcode;
-                document.getElementById('edit_latitude').value = data.latitude;
-                document.getElementById('edit_longitude').value = data.longitude;
-                document.getElementById('edit_price_per_kwh').value = data.price_per_kwh;
-                document.getElementById('edit_available_from').value = data.available_from || '';
-                document.getElementById('edit_available_to').value = data.available_to || '';
-                document.getElementById('edit_isAvailable').value = data.isAvailable ? '1' : '0';
-                document.getElementById('edit_charger_type').value = data.charger_type;
+    // Fetch the charge point data via AJAX (using XMLHttpRequest)
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', `ajax/getChargePoint.php?id=${id}`, true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        // Populate the modal fields with the charge point data
+                        document.getElementById('edit_charge_point_id').value = data.charge_point_id;
+                        document.getElementById('edit_name').value = data.name;
+                        document.getElementById('edit_address').value = data.address;
+                        document.getElementById('edit_postcode').value = data.postcode;
+                        document.getElementById('edit_latitude').value = data.latitude;
+                        document.getElementById('edit_longitude').value = data.longitude;
+                        document.getElementById('edit_price_per_kwh').value = data.price_per_kwh;
+                        document.getElementById('edit_available_from').value = data.available_from || '';
+                        document.getElementById('edit_available_to').value = data.available_to || '';
+                        document.getElementById('edit_isAvailable').value = data.isAvailable ? '1' : '0';
+                        document.getElementById('edit_charger_type').value = data.charger_type;
 
-                // Show the modal
-                const editModal = new bootstrap.Modal(document.getElementById('editChargingPointModal'));
-                editModal.show();
+                        // Show the modal
+                        const editModal = new bootstrap.Modal(document.getElementById('editChargingPointModal'));
+                        editModal.show();
+                    }
+                } catch (e) {
+                    alert('An error occurred while parsing the charging point data.');
+                }
+            } else {
+                alert('An error occurred while fetching the charging point data.');
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while fetching the charging point data.');
-        });
+        }
+    };
+    xhr.send();
 }
 
 function deleteChargePoint(id) {
     if (confirm('Are you sure you want to delete this charging point?')) {
-        fetch('ajax/deleteChargePoint.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `charge_point_id=${id}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Charging point deleted successfully');
-                executeQuery(new Event('submit')); // Refresh the query results dynamically
-            } else {
-                alert('Error: ' + data.message);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'ajax/deleteChargePoint.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    if (data.success) {
+                        alert('Charging point deleted successfully');
+                        executeQuery(new Event('submit')); // Refresh the query results dynamically
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                } catch (e) {
+                    alert('An error occurred while deleting the charging point');
+                }
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while deleting the charging point');
-        });
+        };
+        xhr.send(`charge_point_id=${id}`);
     }
 }
 
@@ -419,82 +421,77 @@ function executeQuery(event) {
     // Clear previous results
     resultsContainer.innerHTML = '<p>Loading...</p>';
 
-    // Send the query via AJAX
-    fetch('ajax/processChargePointQuery.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `query=${encodeURIComponent(query)}`
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+    // Send the query via AJAX (using XMLHttpRequest)
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'ajax/processChargePointQuery.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    if (data.error) {
+                        resultsContainer.innerHTML = `<p class="text-danger">${data.error}</p>`;
+                    } else if (data.results && data.results.length > 0) {
+                        let table = '<div class="table-responsive"><table class="table table-dark table-striped"><thead><tr>';
+                        Object.keys(data.results[0]).forEach(column => {
+                            table += `<th>${column}</th>`;
+                        });
+                        table += '<th>Actions</th></tr></thead><tbody>';
+                        data.results.forEach(row => {
+                            table += '<tr>';
+                            Object.values(row).forEach(value => {
+                                table += `<td>${value}</td>`;
+                            });
+                            table += `
+                                <td>
+                                    <button class="btn btn-sm btn-outline-light" onclick="editChargePoint(${row.charge_point_id})">Edit</button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteChargePoint(${row.charge_point_id})">Delete</button>
+                                </td>
+                            </tr>`;
+                        });
+                        table += '</tbody></table></div>';
+                        resultsContainer.innerHTML = table;
+                    } else {
+                        resultsContainer.innerHTML = '<p>No results found.</p>';
+                    }
+                } catch (e) {
+                    resultsContainer.innerHTML = '<p class="text-danger">An error occurred while executing the query.</p>';
+                }
+            } else {
+                resultsContainer.innerHTML = '<p class="text-danger">An error occurred while executing the query.</p>';
+            }
         }
-        return response.json();
-    })
-    .then(data => {
-        if (data.error) {
-            resultsContainer.innerHTML = `<p class="text-danger">${data.error}</p>`;
-        } else if (data.results && data.results.length > 0) {
-            let table = '<div class="table-responsive"><table class="table table-dark table-striped"><thead><tr>';
-            Object.keys(data.results[0]).forEach(column => {
-                table += `<th>${column}</th>`;
-            });
-            table += '<th>Actions</th></tr></thead><tbody>';
-            data.results.forEach(row => {
-                table += '<tr>';
-                Object.values(row).forEach(value => {
-                    table += `<td>${value}</td>`;
-                });
-                table += `
-                    <td>
-                        <button class="btn btn-sm btn-outline-light" onclick="editChargePoint(${row.charge_point_id})">Edit</button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteChargePoint(${row.charge_point_id})">Delete</button>
-                    </td>
-                </tr>`;
-            });
-            table += '</tbody></table></div>';
-            resultsContainer.innerHTML = table;
-        } else {
-            resultsContainer.innerHTML = '<p>No results found.</p>';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        resultsContainer.innerHTML = '<p class="text-danger">An error occurred while executing the query.</p>';
-    });
+    };
+    xhr.send(`query=${encodeURIComponent(query)}`);
 }
 
 document.getElementById('editChargingPointForm').addEventListener('submit', function (event) {
     event.preventDefault(); // Prevent the default form submission
 
-    const formData = new FormData(this);
+    const form = this;
+    const formData = new FormData(form);
 
-    fetch('ajax/updateChargePoint.php', {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Charging point updated successfully.');
-                location.reload(); // Reload the page to reflect the changes
-            } else {
-                alert('Error: ' + data.error);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'ajax/updateChargePoint.php', true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            try {
+                var data = JSON.parse(xhr.responseText);
+                if (data.success) {
+                    alert('Charging point updated successfully.');
+                    location.reload(); // Reload the page to reflect the changes
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (e) {
+                console.error('Update error:', e, xhr.responseText);
+                alert('An error occurred while updating the charging point.');
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while updating the charging point.');
-        });
+        }
+    };
+    xhr.send(formData);
 });
-
-// window.onload = function () {
-//     if (window.location.hash === '#queryResults') {
-//         document.getElementById('queryResults').scrollIntoView();
-//     }
-// };
 </script>
 
 

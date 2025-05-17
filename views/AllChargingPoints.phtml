@@ -6,9 +6,10 @@
             <div class="mb-5">
                 <div class="d-flex gap-2">
                     <input type="text" id="searchChargingPoints" class="form-control bg-dark text-white border-secondary"
-                        placeholder="Search charging points...">
+                        placeholder="Search by name, location, price:5-10, price:<8, etc.">
                     <select id="filterChargingPoints" class="form-select bg-dark text-white border-secondary">
                         <option value="all">All</option>
+                        <option value="available">Available Only</option>
                         <?php if (isset($view->filterTypes) && !empty($view->filterTypes)): ?>
                             <?php foreach($view->filterTypes as $type): ?>
                                 <option value="<?php echo htmlspecialchars(strtolower(str_replace(' ', '-', $type))); ?>">
@@ -32,7 +33,8 @@
                         <div class="col-12 col-md-6 col-lg-3 mb-4 charging-point-card" 
                              data-type="<?php echo htmlspecialchars(strtolower(str_replace(' ', '-', $chargePoint['charger_type'] ?? ''))); ?>"
                              data-name="<?php echo htmlspecialchars($chargePoint['name']); ?>"
-                             data-address="<?php echo htmlspecialchars($chargePoint['address']); ?>">
+                             data-address="<?php echo htmlspecialchars($chargePoint['address']); ?>"
+                             data-available="<?php echo isset($chargePoint['isAvailable']) && $chargePoint['isAvailable'] ? '1' : '0'; ?>">
                             <div class="card bg-dark text-white">
                                 <?php 
                                 $bgImage = 'images/Level 2 Charger.png'; // Default image
@@ -108,21 +110,56 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterSelect = document.getElementById('filterChargingPoints');
     const chargingPoints = document.querySelectorAll('.charging-point-card');
 
+    function parsePriceRange(searchTerm) {
+        // Supports price:5-10, price:<10, price:>5
+        const priceRegex = /price\s*:\s*(?:(\d+)\s*-\s*(\d+)|([<>]=?)\s*(\d+))/i;
+        const match = searchTerm.match(priceRegex);
+        if (!match) return null;
+        if (match[1] && match[2]) {
+            return { min: parseFloat(match[1]), max: parseFloat(match[2]) };
+        } else if (match[3] && match[4]) {
+            if (match[3].includes('>')) return { min: parseFloat(match[4]) };
+            if (match[3].includes('<')) return { max: parseFloat(match[4]) };
+        }
+        return null;
+    }
+
     function filterChargingPoints() {
         const searchTerm = searchInput.value.toLowerCase();
         const filterType = filterSelect.value;
+
+        // Parse price range from search term
+        const priceRange = parsePriceRange(searchTerm);
+        // Remove price:... from search for normal text search
+        const cleanedSearch = searchTerm.replace(/price\s*:\s*([0-9<>-]+)/i, '').trim();
 
         chargingPoints.forEach(card => {
             const name = card.dataset.name.toLowerCase();
             const address = card.dataset.address.toLowerCase();
             const type = card.dataset.type;
-            
-            // Apply filters
-            const matchesSearch = name.includes(searchTerm) || address.includes(searchTerm);
-            const matchesType = filterType === 'all' || type.includes(filterType);
-            
-            // Show/hide based on filters
-            if (matchesSearch && matchesType) {
+            const price = parseFloat(card.querySelector('.card-text').textContent.match(/([\d.]+)/)?.[1] || 0);
+            const isAvailable = card.dataset.available === "1";
+
+            // Text search (name/address)
+            const matchesSearch = !cleanedSearch || name.includes(cleanedSearch) || address.includes(cleanedSearch);
+
+            // Type filter
+            let matchesType = true;
+            if (filterType === 'available') {
+                matchesType = isAvailable;
+            } else if (filterType !== 'all') {
+                matchesType = type.includes(filterType);
+            }
+
+            // Price filter
+            let matchesPrice = true;
+            if (priceRange) {
+                if (typeof priceRange.min !== 'undefined' && price < priceRange.min) matchesPrice = false;
+                if (typeof priceRange.max !== 'undefined' && price > priceRange.max) matchesPrice = false;
+            }
+
+            // Show/hide based on all filters
+            if (matchesSearch && matchesType && matchesPrice) {
                 card.style.display = 'block';
             } else {
                 card.style.display = 'none';

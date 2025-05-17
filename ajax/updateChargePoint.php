@@ -16,28 +16,21 @@ require_once('../models/Database.php');
 require_once('../models/ChargePoint.php');
 
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $chargePoint = new ChargePoint();
 
-    // Preserve the existing image_path if not provided
-    if (!isset($_POST['image_path'])) {
-        $db = Database::getInstance()->getdbConnection();
-        $stmt = $db->prepare('SELECT image_path FROM charge_points_pr WHERE charge_point_id = :id');
-        $stmt->bindParam(':id', $_POST['charge_point_id'], PDO::PARAM_INT);
-        $stmt->execute();
-        $existingChargePoint = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($existingChargePoint) {
-            $_POST['image_path'] = $existingChargePoint['image_path'];
-        } else {
+    // Only check for fields that are actually in the form (no image_path)
+    $required = ['charge_point_id', 'name', 'address', 'postcode', 'latitude', 'longitude', 'price_per_kwh', 'available_from', 'available_to', 'isAvailable', 'charger_type'];
+    foreach ($required as $field) {
+        if (!isset($_POST[$field])) {
             header('Content-Type: application/json');
-            echo json_encode(['error' => 'Charge point not found.']);
+            echo json_encode(['error' => "Missing field: $field"]);
             exit;
         }
     }
 
     try {
-        // Call the existing updateChargePointAdmin function
+        // Call the updateChargePointAdmin function (which does NOT update image_path)
         $result = $chargePoint->updateChargePointAdmin($_POST, $_POST['charge_point_id']);
         if ($result === true) {
             header('Content-Type: application/json');

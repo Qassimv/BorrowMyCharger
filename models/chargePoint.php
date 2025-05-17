@@ -189,6 +189,50 @@ class ChargePoint
         }
     }
 
+    // Method to update a charge point (admin)
+    public function updateChargePointAdmin($data, $charge_point_id)
+    {
+        // Build the SQL query WITHOUT image_path
+        $sql = "UPDATE charge_points_pr SET
+                name = :name,
+                address = :address,
+                postcode = :postcode,
+                latitude = :latitude,
+                longitude = :longitude,
+                price_per_kwh = :price_per_kwh,
+                available_from = :available_from,
+                available_to = :available_to,
+                isAvailable = :isAvailable,
+                charger_type = :charger_type
+            WHERE charge_point_id = :charge_point_id";
+
+        $stmt = $this->db->prepare($sql);
+
+        // Bind parameters
+        $stmt->bindParam(':name', $data['name']);
+        $stmt->bindParam(':address', $data['address']);
+        $stmt->bindParam(':postcode', $data['postcode']);
+        $stmt->bindParam(':latitude', $data['latitude']);
+        $stmt->bindParam(':longitude', $data['longitude']);
+        $stmt->bindParam(':price_per_kwh', $data['price_per_kwh']);
+        $stmt->bindParam(':available_from', $data['available_from']);
+        $stmt->bindParam(':available_to', $data['available_to']);
+        $isAvailable = ($data['isAvailable'] === 'Available' || $data['isAvailable'] === '1' || $data['isAvailable'] == 1) ? 1 : 0;
+        $stmt->bindParam(':isAvailable', $isAvailable, PDO::PARAM_INT);
+        $stmt->bindParam(':charger_type', $data['charger_type']);
+        $stmt->bindParam(':charge_point_id', $charge_point_id, PDO::PARAM_INT);
+
+        try {
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                return $stmt->errorInfo()[2];
+            }
+        } catch (PDOException $e) {
+            return "Error: " . $e->getMessage();
+        }
+    }
+
     // Method to delete a charge point
     public function deleteChargePoint($charge_point_id, $user_id = null, $isAdmin = false)
     {
@@ -344,7 +388,6 @@ class ChargePoint
     {
         $sql = "SELECT cp.*, u.username FROM charge_points_pr cp 
                 JOIN users_pr u ON cp.user_id = u.user_id
-                WHERE cp.isAvailable = 1
                 ORDER BY cp.created_at DESC
                 LIMIT :limit OFFSET :offset";
 
@@ -359,7 +402,7 @@ class ChargePoint
     
     public function getTotalChargePointsCount()
     {
-        $sql = "SELECT COUNT(*) FROM charge_points_pr WHERE isAvailable = 1";
+        $sql = "SELECT COUNT(*) FROM charge_points_pr";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchColumn();

@@ -204,31 +204,35 @@ function updateEditCoordinateFields(location) {
 function loadChargingPoints() {
     console.log("Loading charging points...");
 
-    fetch('ajax/getChargingPoints.php')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Charging points data:", data);
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'ajax/getChargingPoints.php', true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    console.log("Charging points data:", data);
 
-            // Clear existing markers
-            clearMarkers();
+                    // Clear existing markers
+                    clearMarkers();
 
-            // Add markers for each charging point
-            if (Array.isArray(data) && data.length > 0) {
-                data.forEach(point => {
-                    addChargingPointMarker(point);
-                });
+                    // Add markers for each charging point
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(point => {
+                            addChargingPointMarker(point);
+                        });
+                    } else {
+                        console.log("No charging points found");
+                    }
+                } catch (e) {
+                    console.error('Error parsing charging points JSON:', e);
+                }
             } else {
-                console.log("No charging points found");
+                console.error('Error fetching charging points:', xhr.status, xhr.statusText);
             }
-        })
-        .catch(error => {
-            console.error('Error fetching charging points:', error);
-        });
+        }
+    };
+    xhr.send();
 }
 
 // Add a marker for a charging point
@@ -479,39 +483,42 @@ function geocodeEditLocation(location) {
 // Filter markers by type
 function filterMarkersByType(type) {
     console.log("Filtering markers by type:", type);
-    
+
     // If all types selected, just reload all points
     if (type === 'all') {
         loadChargingPoints();
         return;
     }
-    
-    // Otherwise, fetch filtered points
-    fetch('ajax/getChargingPoints.php?type=' + encodeURIComponent(type))
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Filtered data:", data);
-            
-            // Clear existing markers
-            clearMarkers();
-            
-            // Add markers for filtered points
-            if (Array.isArray(data) && data.length > 0) {
-                data.forEach(point => {
-                    addChargingPointMarker(point);
-                });
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'ajax/getChargingPoints.php?type=' + encodeURIComponent(type), true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    console.log("Filtered data:", data);
+
+                    // Clear existing markers
+                    clearMarkers();
+
+                    // Add markers for filtered points
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(point => {
+                            addChargingPointMarker(point);
+                        });
+                    } else {
+                        console.log("No charging points found for type:", type);
+                    }
+                } catch (e) {
+                    console.error('Error parsing filtered charging points JSON:', e);
+                }
             } else {
-                console.log("No charging points found for type:", type);
+                console.error('Error fetching filtered charging points:', xhr.status, xhr.statusText);
             }
-        })
-        .catch(error => {
-            console.error('Error fetching filtered charging points:', error);
-        });
+        }
+    };
+    xhr.send();
 }
 
 // Initialize event listeners for modals
