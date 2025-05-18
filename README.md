@@ -82,6 +82,8 @@ This application uses an MVC architecture implemented with PHP, MySQL, HTML/CSS,
 
 For testing purposes, you can use the following accounts:
 
+Allow only '123456' as a special test password , for the rest of the passwords we did the validation
+
 ### Homeowner
 - Username: lee@lee.com
 - Password: 123456
@@ -99,9 +101,9 @@ For testing purposes, you can use the following accounts:
 
 - [Zainab Abdulla 202203386]
 - [Marwa Abbas 202202170]
-- [Qasim]
-- [Hasan]
-- [Duha]
+- [Qasim Alshehabi 202202979 ]
+- [Hasan Algallaf 202201196]
+- [Duha Hashem 202201251]
 
 
 
