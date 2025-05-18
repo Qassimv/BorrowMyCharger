@@ -83,23 +83,23 @@ This application uses an MVC architecture implemented with PHP, MySQL, HTML/CSS,
 For testing purposes, you can use the following accounts:
 
 ### Homeowner
-- Username:
-- Password:
+- Username: lee@lee.com
+- Password: 123456
 - Charging Point: 
 
 ### User
-- Username:  
-- Password: 
+- Username: user@user.com
+- Password: 123456
 
 ### Admin
-- Username: 
-- Password: 
+- Username: admin@admin.com
+- Password: 123456
 
 ## Contributors
 
-- [Zainab Abdulla]
-- [Marwa Abbas]
-- [Qassem]
+- [Zainab Abdulla 202203386]
+- [Marwa Abbas 202202170]
+- [Qasim]
 - [Hasan]
 - [Duha]
 
