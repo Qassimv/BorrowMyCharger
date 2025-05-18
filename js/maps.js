@@ -262,6 +262,8 @@ function addChargingPointMarker(point) {
         showChargingPointDetails(point);
     });
 
+    console.log("Marker data:", point);
+
     markers.push(marker);
 }
 
@@ -580,12 +582,14 @@ function showChargingPointDetails(point) {
     modalFooter.innerHTML = "";
     if (point.userRole === "user") {
         modalFooter.innerHTML = `
-            <button class="btn btn-primary" onclick="bookChargingPoint(${point.charge_point_id})">Book Now</button>
+            <a href="booking.php?id=${point.charge_point_id}" class="btn btn-primary">Book Now</a>
         `;
     }
 
     // Debugging: Log modal content
     console.log("Modal content populated for:", point.name);
+    console.log("User role for this point:", point.userRole);
+    console.log("charge_point_id for Book Now:", point.charge_point_id);
 
     // Show the modal
     const chargingPointModal = new bootstrap.Modal(document.getElementById("chargingPointModal"));

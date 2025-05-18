@@ -14,6 +14,7 @@ try {
     if (!$chargePointId) {
         header('Location: index.php');
         exit;
+        die('NO ID: ' . var_export($_GET, true));
     }
     
     $chargePointModel = new ChargePoint();

@@ -18,8 +18,7 @@ try {
     
     // Prepare SQL query
     $sql = "SELECT cp.*, u.username FROM charge_points_pr cp 
-            JOIN users_pr u ON cp.user_id = u.user_id
-            WHERE cp.isAvailable = 1";
+            JOIN users_pr u ON cp.user_id = u.user_id";
     
     // Add filter for type if provided
     if (isset($_GET['type']) && !empty($_GET['type'])) {
@@ -50,9 +49,9 @@ try {
     // Fetch all results
     $chargingPoints = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Add user role to each charging point
+    $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : null;
     foreach ($chargingPoints as &$point) {
-        $point['userRole'] = $_SESSION['role'] ?? 'guest'; // Default to 'guest' if not logged in
+        $point['userRole'] = $userRole;
     }
 
     // Return JSON response
